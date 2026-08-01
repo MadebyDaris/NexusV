@@ -64,3 +64,8 @@ NexusV/
 │
 └── docs/                        # Architecture specs and CV-X-IF integration guides
 ```
+
+## Documentation
+
+- [Hardware Background](docs/Hardware.md)
+- [Hardware Usage Workflow (Graph -> RTL -> Verilator)](docs/HW_Usage_Workflow.md)
