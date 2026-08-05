@@ -1,6 +1,3 @@
-using MacroTools
-
-
 macro nexus_accelerate(fn_def)
     # 1. Validate and capture the function syntax (supports both standard and short forms)
     if !(@capture(fn_def, function name_(args__) body_ end) || @capture(fn_def, name_(args__) = body_))
