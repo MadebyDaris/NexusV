@@ -1,32 +1,90 @@
-# 1. Hardware Technology Stack
+# Hardware Architecture
 
-- Target Core: CV32E40X (inside X-HEEP) – natively supports CV-X-IF.
-- Hardware Description Language: SystemVerilog (IEEE 1800-2017). Synthesizable, professional grade.
-- Generation Engine: Julia (specifically IO streams and string interpolation to write .sv files dynamically).
-- Simulation Engine: Verilator (Translates RTL to C++ for massive speedups) + standard GCC for the RISC-V software.
-- Waveform Viewing: GTKWave or Surfer (to inspect FST/VCD dumps of your accelerators).
+## Technology Stack
 
-# Introduction
+- **Target Core:** cv32e40px (inside X-HEEP) — supports CV-X-IF via the `cv32e40px_xif_wrapper`
+- **Hardware Description Language:** SystemVerilog (IEEE 1800-2017)
+- **Generation Engine:** Julia (IO streams and string interpolation to write `.sv` files dynamically)
+- **Simulation Engine:** Verilator (translates RTL to C++ for fast simulation) + standard GCC for RISC-V software
+- **Waveform Viewing:** GTKWave or Surfer (to inspect FST/VCD dumps)
 
-We will use the Core-V eXtension interface,or for short CV-X-IF, aimed primarly at extending a CPU with (custom or standardized) instructions implemented in a coprocessor.
+## CV-X-IF Overview
 
-The goal of CV-X-IF is to enable the design and verification of instruction extensions in a coprocessor in a standardized manner without the need to modify the CPU itself. Having a common interface allows designers of RISC-V CPUs to reuse existing co-processor and vice versa. Please note that the CPU and coprocessor can have different license models. For example, the coprocessor could be closed source, connected to an open-source CPU.
+The [Core-V eXtension Interface](https://docs.openhwgroup.org/projects/openhw-group-core-v-xif/) (CV-X-IF) is a standardized protocol for plugging a custom accelerator into a RISC-V CPU core without modifying the CPU itself.
 
-This project consists of two main concepts: The Shell and the Generated Datapaths.
+When the CPU encounters an instruction it doesn't recognize (e.g., opcode `CUSTOM_0 = 0x0B`), it offloads it to the coprocessor via CV-X-IF. The coprocessor executes the instruction and returns the result. From the CPU's perspective, the custom instruction behaves like any other instruction in the pipeline.
 
-# The duality of NexusV hardware
-## The Shell (The Docking Station)
+CV-X-IF consists of six channels:
 
-It consists of three parallel finite state machines (FSMs) compliant with the OpenHW CV-X-IF standard:
-1. Issue Interface: Receives the instruction opcode, rs1, rs2, and an ID tag from the CPU.
-2. Commit/Kill Interface: The CPU tells your hardware, "Instruction ID 4 is committed, you can write the result," OR "Instruction ID 4 was a branch misprediction, flush it."
-3. Result Interface: Pushes the final rd (Destination Register) data back to the CPU pipeline.
+| Channel | Direction | Purpose |
+|---|---|---|
+| **Compressed** | CPU → Coproc | Handle 16-bit compressed custom instructions (not used by NexusV) |
+| **Issue** | CPU ↔ Coproc | CPU offers an instruction; coprocessor accepts or rejects |
+| **Commit** | CPU → Coproc | CPU confirms the instruction is committed (not a mispredicted branch) |
+| **Memory** | Coproc → CPU | Coprocessor requests memory access (not used by NexusV) |
+| **Memory Result** | CPU → Coproc | CPU returns memory read data (not used by NexusV) |
+| **Result** | Coproc → CPU | Coprocessor returns the computed result to the CPU |
 
-## The RTL Emitter & Datapaths (The Xtensa Magic)
-When given a final optimized Data Flow Graph (DFG) of an instruction,nu;erous steps must be taken,
+NexusV uses three of these: **Issue**, **Commit**, and **Result**.
 
-1. Schedule: Determine how many clock cycles the operation needs. If it's a massive Kyber modular multiplication, maybe it takes 3 clock cycles. Your Julia script inserts pipeline registers automatically.
+## The Two Halves of NexusV Hardware
 
-2. Allocate: Map the DFG nodes to hardware. A DFG * node becomes assign res = a * b; in Verilog.
+### The Shell (`cvxif_nexus_shell.sv`)
 
-3. Emit & Route: The tool generates a new .sv file for the math. It then updates nexus_mux.sv to route the specific custom opcode (e.g., CUSTOM_0) to this new datapath.
+Located at: [`hw/rtl/cvxif_nexus_shell.sv`](hw/rtl/cvxif_nexus_shell.sv)
+
+A hand-written, reusable FSM that implements the CV-X-IF protocol. It has four states:
+
+```
+IDLE → WAIT_COMMIT → WAIT_DATAPATH → SEND_RESULT → IDLE
+```
+
+1. **IDLE:** Listens for instructions on the issue channel. Accepts instructions with opcode `CUSTOM_0` (`7'h0B`). Saves `rs1`, `rs2`, `id`, and `rd` address.
+2. **WAIT_COMMIT:** Waits for the CPU to confirm the instruction is not speculative. If `commit_kill=1`, flushes back to IDLE.
+3. **WAIT_DATAPATH:** Asserts `start_i` to the generated datapath. Waits for `done_o`.
+4. **SEND_RESULT:** Drives the result onto the CV-X-IF result channel. Returns to IDLE when the CPU accepts.
+
+The shell exposes a standardized internal interface to any generated datapath:
+
+```systemverilog
+// Signals between the shell and the generated datapath
+logic        dp_start;   // Shell → Datapath: begin computation
+logic [31:0] dp_rs1;     // Shell → Datapath: source operand 1
+logic [31:0] dp_rs2;     // Shell → Datapath: source operand 2
+logic [31:0] dp_rd;      // Datapath → Shell: computation result
+logic        dp_done;    // Datapath → Shell: result is ready
+```
+
+### The Generated Datapaths (e.g., `mac_plus_5.sv`)
+
+Located at: [`hw/rtl/mac_plus_5.sv`](hw/rtl/mac_plus_5.sv)
+
+Auto-generated by `VerilogEmitter.jl` from a scheduled `HWGraph`. Each datapath has the same port interface:
+
+```systemverilog
+module <name> (
+    input  logic        clk_i,
+    input  logic        rst_ni,
+    input  logic        start_i,
+    input  logic [31:0] rs1_i,
+    input  logic [31:0] rs2_i,
+    output logic [31:0] rd_o,
+    output logic        done_o
+);
+```
+
+The emitter automatically:
+- Groups operations by scheduled clock cycle
+- Inserts pipeline registers between cycles
+- Generates a `done_o` shift register matching the pipeline depth
+
+### The Integration Top (`nexus_top.sv`)
+
+Located at: [`hw/rtl/nexus_top.sv`](hw/rtl/nexus_top.sv)
+
+This module owns the `if_xif` interface instance and connects:
+- **X-HEEP** (`x_heep_system`) — the CPU side, using `if_xif.cpu_*` modports
+- **The shell** (`cvxif_nexus_shell`) — the coprocessor side, with flat ports mapped to interface fields
+- **Tie-offs** — unused CV-X-IF channels (compressed, memory) driven to safe values
+
+The `if_xif` interface is defined in [`hw/ext_xheep/hw/vendor/openhwgroup/cv32e40x/rtl/if_xif.sv`](hw/ext_xheep/hw/vendor/openhwgroup/cv32e40x/rtl/if_xif.sv). It bundles all CV-X-IF signals into a single SystemVerilog interface with modports for both the CPU side and the coprocessor side.

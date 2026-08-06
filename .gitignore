@@ -1,2 +1,4 @@
 /hw/rtl_nexus/obj_dir*
 /obj_dir*
+/hw/rtl/obj_dir*
+*.DS_Store

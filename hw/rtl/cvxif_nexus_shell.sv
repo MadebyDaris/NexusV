@@ -9,10 +9,11 @@
 //   WAIT_COMMIT  - instruction issued, waiting for CPU commit/kill
 //   WAIT_DATAPATH- committed, datapath is running
 //   SEND_RESULT  - datapath done, returning result to CPU
+import cv32e40x_pkg::*; 
 
 module cvxif_nexus_shell (
-    input  logic clk_i,
-    input  logic rst_ni,
+    input  logic        clk_i,
+    input  logic        rst_ni,
 
     // CV-X-IF Issue Channel
     input  logic        x_issue_req_valid_i,
@@ -28,7 +29,7 @@ module cvxif_nexus_shell (
 
     // CV-X-IF Commit Channel
     input  logic        x_commit_valid_i,
-    input  logic [4:0]  x_commit_id_i,
+    input  logic [4:0]  x_commit_id_i, // Emitter channel
     input  logic        x_commit_kill_i,
 
     // CV-X-IF Result Channel
