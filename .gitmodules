@@ -1,0 +1,3 @@
+[submodule "hw/ext_xheep"]
+	path = hw/ext_xheep
+	url = https://github.com/x-heep/x-heep.git
