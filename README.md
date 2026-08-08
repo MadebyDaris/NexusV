@@ -187,6 +187,7 @@ NexusV/
 
 - [Hardware Architecture](docs/Hardware.md) — Shell, datapaths, and CV-X-IF protocol overview
 - [Hardware Workflow](docs/HW_Usage_Workflow.md) — Step-by-step guide: Julia graph → RTL → Verilator simulation
+- [Project Pipeline](docs/Project_Pipeline.md) — End-to-end overview of the repository structure, toolchain, and development flow
 
 ---
 

@@ -71,30 +71,20 @@ logic [31:0] dp_rs1, dp_rs2;
 logic [31:0] dp_rd;
 logic        dp_done;
 
-// -- Stub: direct addition so the shell is self-contained without a datapath --
-// -- Replace this block with your generated module instantiation.             --
-logic done_r;
+// -- Datapath operand routing --
 assign dp_rs1 = saved_rs1_q;
 assign dp_rs2 = saved_rs2_q;
-assign dp_rd  = saved_rs1_q + saved_rs2_q;   // stub: rs1 + rs2
-always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) done_r <= 1'b0;
-    else         done_r <= dp_start;
-end
-assign dp_done = done_r;
-// -- End stub --
 
-// Example instantiation (uncomment and fill in the generated module name):
-//
-// mac_plus_5 u_datapath (
-//     .clk_i   (clk_i),
-//     .rst_ni  (rst_ni),
-//     .start_i (dp_start),
-//     .rs1_i   (dp_rs1),
-//     .rs2_i   (dp_rs2),
-//     .rd_o    (dp_rd),
-//     .done_o  (dp_done)
-// );
+// -- Instantiate the generated datapath --
+mac_plus_5 u_datapath (
+    .clk_i   (clk_i),
+    .rst_ni  (rst_ni),
+    .start_i (dp_start),
+    .rs1_i   (dp_rs1),
+    .rs2_i   (dp_rs2),
+    .rd_o    (dp_rd),
+    .done_o  (dp_done)
+);
 
 // --------------------------------------------------------------------------
 // Combinational FSM

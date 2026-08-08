@@ -1,7 +1,8 @@
 module DFG_Builder
 
 export Opcode, OP_ARG, OP_CONST, OP_ADD, OP_SUB, OP_MUL, OP_RET
-export DFGNode, HWGraph
+export OP_SHR, OP_SHL, OP_AND, OP_OR, OP_XOR, OP_MOD
+export DFGNode, HWGraph, OP_LATENCY
 
 @enum Opcode begin
     OP_ARG    # Input argument (maps to rs1, rs2, ...)
@@ -9,8 +10,32 @@ export DFGNode, HWGraph
     OP_ADD
     OP_SUB
     OP_MUL
+    OP_SHR    # Logical shift right
+    OP_SHL    # Logical shift left
+    OP_AND    # Bitwise AND
+    OP_OR     # Bitwise OR
+    OP_XOR    # Bitwise XOR
+    OP_MOD    # Modulo (remainder)
     OP_RET    # Return / output node
 end
+
+# Default cycle latency per opcode.
+# OP_ARG / OP_CONST / OP_RET have 0 latency — they don't consume compute cycles.
+# Multiply and divide-like ops default to multi-cycle.
+const OP_LATENCY = Dict{Opcode,Int}(
+    OP_ARG   => 0,
+    OP_CONST => 0,
+    OP_RET   => 0,
+    OP_ADD   => 1,
+    OP_SUB   => 1,
+    OP_MUL   => 2,
+    OP_SHR   => 1,
+    OP_SHL   => 1,
+    OP_AND   => 1,
+    OP_OR    => 1,
+    OP_XOR   => 1,
+    OP_MOD   => 3,
+)
 
 # A single node in the Data Flow Graph.
 # - id:              unique integer identifier
@@ -19,6 +44,7 @@ end
 # - inputs:          IDs of nodes that produce this node's operands
 # - const_val:       only set for OP_CONST nodes
 # - scheduled_cycle: filled in by the Scheduler; 0 means unscheduled
+# - latency:         number of clock cycles this operation requires
 mutable struct DFGNode
     id::Int
     op::Opcode
@@ -26,8 +52,7 @@ mutable struct DFGNode
     inputs::Vector{Int}
     const_val::Union{Nothing,Int}
     scheduled_cycle::Int
-    # latency_hint::Int To add amounts of cycles that an opration of a specific node takes
-    # scheduled_delay::Int the initial delay of the node.  
+    latency::Int
 end
 
 # The top-level Data Flow Graph.

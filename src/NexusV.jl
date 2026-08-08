@@ -22,7 +22,8 @@ export register_unroll_hint!, get_unroll_hint, clear_unroll_hints!
 
 # DFG types
 export Opcode, OP_ARG, OP_CONST, OP_ADD, OP_SUB, OP_MUL, OP_RET
-export DFGNode, HWGraph
+export OP_SHR, OP_SHL, OP_AND, OP_OR, OP_XOR, OP_MOD
+export DFGNode, HWGraph, OP_LATENCY
 
 # ── Internals ─────────────────────────────────────────────────────────────────
 

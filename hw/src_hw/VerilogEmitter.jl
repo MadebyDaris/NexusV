@@ -1,5 +1,5 @@
 # VerilogEmitter.jl
-# Depends on DFG_Builder types being available in the caller's scope.
+# Depends on DFG_Builder types and Scheduler (finish_cycle) being available.
 
 export emit_verilog
 
@@ -8,6 +8,12 @@ function op_to_sv(op::Opcode)::String
     op == OP_ADD && return "+"
     op == OP_SUB && return "-"
     op == OP_MUL && return "*"
+    op == OP_SHR && return ">>"
+    op == OP_SHL && return "<<"
+    op == OP_AND && return "&"
+    op == OP_OR  && return "|"
+    op == OP_XOR && return "^"
+    op == OP_MOD && return "%"
     error("No SV operator for opcode: $op")
 end
 
@@ -20,6 +26,8 @@ reg_wire(id::Int, c::Int) = "n$(id)_r$(c)"
 #   clk_i, rst_ni, start_i, rs1_i [, rs2_i ...], rd_o, done_o
 #
 # Precondition: schedule_asap!(graph) must be called first.
+# Multi-cycle ops are supported via pipeline register chains that span
+# from scheduled_cycle through finish_cycle.
 function emit_verilog(graph::HWGraph, filepath::String)
     W         = 32
     arg_ids   = graph.graph_inputs
@@ -27,7 +35,7 @@ function emit_verilog(graph::HWGraph, filepath::String)
     out_id    = ret_node.inputs[1]
     max_cycle = graph.latency
 
-    # Group compute nodes by their scheduled cycle
+    # Group compute nodes by their scheduled (start) cycle
     by_cycle = [Int[] for _ in 1:max_cycle]
     for (id, node) in graph.nodes
         node.op in (OP_ARG, OP_CONST, OP_RET) && continue
@@ -36,15 +44,19 @@ function emit_verilog(graph::HWGraph, filepath::String)
 
     port_names = ["rs1_i", "rs2_i", "rs3_i", "rs4_i"]
 
-    # Resolve a dependency node to the correct SV signal at a given cycle.
-    function resolve(dep_id::Int, cyc::Int)::String
+    # Resolve a dependency node to the correct SV signal at a given consumer cycle.
+    # If the dependency finishes before the consumer starts, use the final
+    # registered value; otherwise use the combinational wire.
+    function resolve(dep_id::Int, consumer_cycle::Int)::String
         dep = graph.nodes[dep_id]
         if dep.op == OP_ARG
             return port_names[findfirst(==(dep_id), arg_ids)]
         elseif dep.op == OP_CONST
             return "$(W)'d$(dep.const_val)"
-        elseif dep.scheduled_cycle < cyc
-            return reg_wire(dep_id, dep.scheduled_cycle)
+        end
+        dep_finish = finish_cycle(dep)
+        if dep_finish < consumer_cycle
+            return reg_wire(dep_id, dep_finish)
         else
             return comb_wire(dep_id)
         end
@@ -75,18 +87,21 @@ function emit_verilog(graph::HWGraph, filepath::String)
     end
     push!(lines, "")
 
-    # Pipeline register declarations
+    # Pipeline register declarations — one register per cycle from
+    # scheduled_cycle through finish_cycle for each compute node.
     if max_cycle > 1
         push!(lines, "    // Pipeline stage registers")
-        for cyc in 1:(max_cycle-1)
-            for id in by_cycle[cyc]
+        for (id, node) in graph.nodes
+            node.op in (OP_ARG, OP_CONST, OP_RET) && continue
+            fc = finish_cycle(node)
+            for cyc in node.scheduled_cycle:fc
                 push!(lines, "    logic [$(W-1):0] $(reg_wire(id, cyc));")
             end
         end
         push!(lines, "")
     end
 
-    # done shift register / flop
+    # done shift register
     if max_cycle == 1
         push!(lines, "    logic done_r;")
     else
@@ -108,19 +123,25 @@ function emit_verilog(graph::HWGraph, filepath::String)
     end
     push!(lines, "")
 
-    # Pipeline flip-flops
+    # Pipeline flip-flops — chain registers across multi-cycle latency
     if max_cycle > 1
         push!(lines, "    always_ff @(posedge clk_i or negedge rst_ni) begin")
         push!(lines, "        if (!rst_ni) begin")
-        for cyc in 1:(max_cycle-1)
-            for id in by_cycle[cyc]
+        for (id, node) in graph.nodes
+            node.op in (OP_ARG, OP_CONST, OP_RET) && continue
+            for cyc in node.scheduled_cycle:finish_cycle(node)
                 push!(lines, "            $(reg_wire(id, cyc)) <= '0;")
             end
         end
         push!(lines, "        end else begin")
-        for cyc in 1:(max_cycle-1)
-            for id in by_cycle[cyc]
-                push!(lines, "            $(reg_wire(id, cyc)) <= $(comb_wire(id));")
+        for (id, node) in graph.nodes
+            node.op in (OP_ARG, OP_CONST, OP_RET) && continue
+            fc = finish_cycle(node)
+            # First register captures combinational result
+            push!(lines, "            $(reg_wire(id, node.scheduled_cycle)) <= $(comb_wire(id));")
+            # Subsequent registers shift the value forward
+            for cyc in (node.scheduled_cycle + 1):fc
+                push!(lines, "            $(reg_wire(id, cyc)) <= $(reg_wire(id, cyc - 1));")
             end
         end
         push!(lines, "        end")
@@ -128,21 +149,21 @@ function emit_verilog(graph::HWGraph, filepath::String)
         push!(lines, "")
     end
 
-    # Output wire
+    # Output wire — use the final registered value of the output-producing node
     final_node = graph.nodes[out_id]
     final_wire = if final_node.op == OP_ARG
         port_names[findfirst(==(out_id), arg_ids)]
     elseif final_node.op == OP_CONST
         "$(W)'d$(final_node.const_val)"
-    elseif max_cycle > 1 && final_node.scheduled_cycle < max_cycle
-        reg_wire(out_id, final_node.scheduled_cycle)
+    elseif max_cycle > 1
+        reg_wire(out_id, finish_cycle(final_node))
     else
         comb_wire(out_id)
     end
     push!(lines, "    assign rd_o = $final_wire;")
     push!(lines, "")
 
-    # done_o
+    # done_o — shift register matching total pipeline depth
     push!(lines, "    always_ff @(posedge clk_i or negedge rst_ni) begin")
     push!(lines, "        if (!rst_ni) begin")
     if max_cycle == 1

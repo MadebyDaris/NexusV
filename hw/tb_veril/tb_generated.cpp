@@ -6,7 +6,7 @@
 //
 // Expected DUT: mac_plus_5  ->  result = (rs1 * rs2) + 5
 //   rs1=3, rs2=4 => (3*4)+5 = 17
-//   Latency: 2 cycles (MUL in cycle 1, ADD in cycle 2)
+//   Latency: 4 cycles (MUL=2 cycles, ADD=1 cycle)
 
 #include "Vmac_plus_5.h"
 #include "verilated.h"

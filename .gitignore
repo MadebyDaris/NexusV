@@ -1,4 +1,51 @@
-/hw/rtl_nexus/obj_dir*
-/obj_dir*
-/hw/rtl/obj_dir*
-*.DS_Store
+# Local build / simulation outputs
+/obj_dir/
+/obj_dir_local/
+/obj_dir_trace/
+**/obj_dir/
+**/obj_dir_local/
+**/obj_dir_trace/
+**/obj_dir*/
+
+# Verilator / waveform artifacts
+*.vcd
+*.vvp
+*.fst
+*.vpd
+*.lxt
+*.lxs
+*.wlf
+
+# Compiled / linked artifacts
+*.o
+*.a
+*.so
+*.d
+*.dSYM/
+*.elf
+*.hex
+*.bin
+*.map
+*.out
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Julia / Python / editor caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.julia/
+.julia_artifacts/
+.venv/
+venv/
+.vscode/
+backup/
+.idea/
+
+# macOS / Windows noise
+.DS_Store
+Thumbs.db

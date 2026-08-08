@@ -2,8 +2,8 @@
 //
 // Verilator testbench for cvxif_nexus_shell.
 // Tests: issue -> commit -> result handshake.
-// The stub datapath inside the shell computes rs1 + rs2 in 1 cycle.
-//   rs1=10, rs2=20 => expected result = 30
+// The shell now instantiates mac_plus_5: (rs1 * rs2) + 5, 4-cycle latency.
+//   rs1=10, rs2=20 => expected result = (10*20)+5 = 205
 
 #include "Vcvxif_nexus_shell.h"
 #include "verilated.h"
@@ -12,8 +12,10 @@
 
 static vluint64_t sim_time = 0;
 
-double sc_time_stamp() { return sim_time; }
+double sc_time_stamp() { return sim_time; } // Called by $time in Verilog
 
+
+// Tick the DUT for one clock cycle on edge rise
 static void tick(Vcvxif_nexus_shell* dut) {
     dut->clk_i = 0; dut->eval(); sim_time++;
     dut->clk_i = 1; dut->eval(); sim_time++;
@@ -44,19 +46,18 @@ int main(int argc, char** argv) {
     dut->rst_ni = 1;
     tick(dut);
 
-    // -----------------------------------------------------------------------
-    // Test 1: Normal flow — issue, commit, get result
-    // -----------------------------------------------------------------------
+    // Normal flow issue, commit, get result
     std::cout << "--- Test 1: Normal issue/commit/result ---" << std::endl;
 
+    // remember that the custom instruction is R-type, opcode=0x0B, rd=x1, rs1=x1, rs2=x2
     // CUSTOM_0 R-type: opcode=0x0B, rd=x1, rs1=x1, rs2=x2
     uint32_t instr = (0x0 << 25) | (2 << 20) | (1 << 15) | (0 << 12) | (1 << 7) | 0x0B;
 
-    dut->x_issue_req_valid_i = 1;
+    dut->x_issue_req_valid_i = 1; // send instruction
     dut->x_issue_req_instr_i = instr;
     dut->x_issue_req_rs1_i   = 10;
     dut->x_issue_req_rs2_i   = 20;
-    dut->x_issue_req_id_i    = 1;
+    dut->x_issue_req_id_i    = 1; // CPU will use this ID to match the result
     dut->clk_i = 0; dut->eval();
 
     if (dut->x_issue_resp_valid_o && dut->x_issue_resp_accept_o)
@@ -84,8 +85,8 @@ int main(int argc, char** argv) {
 
     if (dut->x_result_valid_o) {
         std::cout << "  Result valid, data = " << dut->x_result_data_o
-                  << "  (expected 30)" << std::endl;
-        if (dut->x_result_data_o == 30)
+                  << "  (expected 205)" << std::endl;
+        if (dut->x_result_data_o == 205)
             std::cout << "  Test 1: PASS" << std::endl;
         else {
             std::cout << "  Test 1: FAIL (wrong value)" << std::endl;
@@ -97,9 +98,8 @@ int main(int argc, char** argv) {
     }
     tick(dut); // CPU accepts result
 
-    // -----------------------------------------------------------------------
-    // Test 2: Kill (branch mispredict) — shell must return to IDLE
-    // -----------------------------------------------------------------------
+    // Kill (branch mispredict) shell must return to IDLE
+    // assert that the shell is back in IDLE by issuing another instruction and checking ready signal
     std::cout << "\n--- Test 2: Kill (mispredict) ---" << std::endl;
 
     dut->x_issue_req_valid_i = 1;
@@ -134,7 +134,6 @@ int main(int argc, char** argv) {
     dut->clk_i = 1; dut->eval(); sim_time++;
     dut->x_issue_req_valid_i = 0;
 
-    // -----------------------------------------------------------------------
     std::cout << "\n=== " << (test_pass ? "ALL TESTS PASSED" : "SOME TESTS FAILED") << " ===" << std::endl;
 
     delete dut;

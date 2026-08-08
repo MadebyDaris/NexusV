@@ -36,9 +36,39 @@ module nexus_top (
     // ──────────────────────────────────────────────────────────────────────
     if_xif #() ext_if ();
 
-    // ──────────────────────────────────────────────────────────────────────
-    // X-HEEP System
-    // ──────────────────────────────────────────────────────────────────────
+    wire boot_select_w = 1'b1;
+    
+    // Power management loopback with 15-cycle delay
+    localparam SWITCH_ACK_LATENCY = 15;
+    
+    wire cpu_subsystem_powergate_switch_n;
+    wire peripheral_subsystem_powergate_switch_n;
+    wire [0:0] external_subsystem_powergate_switch_n;
+    
+    logic [SWITCH_ACK_LATENCY:0] cpu_subsystem_powergate_switch_ack_n;
+    logic [SWITCH_ACK_LATENCY:0] peripheral_subsystem_powergate_switch_ack_n;
+    logic [0:0] external_subsystem_powergate_switch_ack_n [SWITCH_ACK_LATENCY:0];
+    
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            cpu_subsystem_powergate_switch_ack_n <= '0;
+            peripheral_subsystem_powergate_switch_ack_n <= '0;
+            for (int i = 0; i <= SWITCH_ACK_LATENCY; i++) begin
+                external_subsystem_powergate_switch_ack_n[i] <= '0;
+            end
+        end else begin
+            cpu_subsystem_powergate_switch_ack_n[0] <= cpu_subsystem_powergate_switch_n;
+            peripheral_subsystem_powergate_switch_ack_n[0] <= peripheral_subsystem_powergate_switch_n;
+            external_subsystem_powergate_switch_ack_n[0] <= external_subsystem_powergate_switch_n;
+            
+            for (int i = 1; i <= SWITCH_ACK_LATENCY; i++) begin
+                cpu_subsystem_powergate_switch_ack_n[i] <= cpu_subsystem_powergate_switch_ack_n[i-1];
+                peripheral_subsystem_powergate_switch_ack_n[i] <= peripheral_subsystem_powergate_switch_ack_n[i-1];
+                external_subsystem_powergate_switch_ack_n[i] <= external_subsystem_powergate_switch_ack_n[i-1];
+            end
+        end
+    end
+    
     x_heep_system #(
         .EXT_XBAR_NMASTER (0),
         .AO_SPC_NUM       (0)
@@ -59,10 +89,16 @@ module nexus_top (
         .intr_vector_ext_i     (intr_vector_ext_i),
         .intr_ext_peripheral_i (1'b0),
 
-        // Power management (tie off)
-        .cpu_subsystem_powergate_switch_ack_ni        (1'b1),
-        .peripheral_subsystem_powergate_switch_ack_ni (1'b1),
-        .external_subsystem_powergate_switch_ack_ni   ('1),
+        // Boot Select (1 = JTAG/Testbench loop, 0 = SPI Flash)
+        .boot_select_i (boot_select_w),
+
+        // Power management
+        .cpu_subsystem_powergate_switch_no            (cpu_subsystem_powergate_switch_n),
+        .cpu_subsystem_powergate_switch_ack_ni        (cpu_subsystem_powergate_switch_ack_n[SWITCH_ACK_LATENCY]),
+        .peripheral_subsystem_powergate_switch_no     (peripheral_subsystem_powergate_switch_n),
+        .peripheral_subsystem_powergate_switch_ack_ni (peripheral_subsystem_powergate_switch_ack_n[SWITCH_ACK_LATENCY]),
+        .external_subsystem_powergate_switch_no       (external_subsystem_powergate_switch_n),
+        .external_subsystem_powergate_switch_ack_ni   (external_subsystem_powergate_switch_ack_n[SWITCH_ACK_LATENCY]),
 
         // Debug
         .ext_debug_master_resp_i ('0),
