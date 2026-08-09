@@ -1,4 +1,4 @@
-// nexus_simd_mac — SIMD multiply-accumulate primitive
+// nexus_simd_mac SIMD multiply-accumulate primitive
 //
 // Computes:  acc += Σ(a_lane[i] * b_lane[i])  across LANES
 //
@@ -29,7 +29,6 @@ module nexus_simd_mac #(
 
     localparam int PROD_WIDTH = DATA_WIDTH * 2;
 
-    // ── Stage 1: per-lane signed multiply ─────────────────────────────────
     logic signed [PROD_WIDTH-1:0] prod [LANES-1:0];
     logic signed [PROD_WIDTH-1:0] prod_r [LANES-1:0];
 
@@ -41,7 +40,6 @@ module nexus_simd_mac #(
         end
     endgenerate
 
-    // ── Stage 2: reduction sum ────────────────────────────────────────────
     logic signed [ACC_WIDTH-1:0] sum_comb;
     logic signed [ACC_WIDTH-1:0] sum_r;
 
@@ -54,7 +52,6 @@ module nexus_simd_mac #(
     end
     /* verilator lint_on WIDTHEXPAND */
 
-    // ── Stage 3: accumulate ───────────────────────────────────────────────
     logic signed [ACC_WIDTH-1:0] acc_q;
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
@@ -72,7 +69,6 @@ module nexus_simd_mac #(
         end
     end
 
-    // ── Pipeline registers ────────────────────────────────────────────────
     always_ff @(posedge clk_i) begin
         for (int k = 0; k < LANES; k++) begin
             prod_r[k] <= prod[k];

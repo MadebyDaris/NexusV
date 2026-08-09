@@ -31,8 +31,7 @@ module nexus_top (
 );
 
     // ──────────────────────────────────────────────────────────────────────
-    // CV-X-IF interface instance — the shared wire bundle between X-HEEP
-    // and our coprocessor shell.
+    // CV-X-IF interface instance shared wire bundle X-HEEP and coprocessor shell.
     // ──────────────────────────────────────────────────────────────────────
     if_xif #() ext_if ();
 
@@ -177,7 +176,7 @@ module nexus_top (
     );
 
     // ──────────────────────────────────────────────────────────────────────
-    // NexusV Dispatcher Mux — routes shell → selected datapath → shell
+    // NexusV Dispatcher Mux routes shell to datapath and back to shell.
     // ──────────────────────────────────────────────────────────────────────
     nexus_mux u_mux (
         .clk_i    (clk_i),

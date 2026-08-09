@@ -24,7 +24,7 @@ function register_primitive!(spec::PrimitiveSpec)
     println("[PrimitiveLibrary] Registered :$(spec.name) → $(spec.module_name) (latency=$(spec.latency))")
 end
 
-# ── Built-in primitives ───────────────────────────────────────────────────────
+# Built-in primitives
 
 register_primitive!(PrimitiveSpec(
     :simd_mac,
@@ -32,6 +32,22 @@ register_primitive!(PrimitiveSpec(
     "primitives/nexus_simd_mac.sv",
     3,
     Dict(:LANES => 4, :DATA_WIDTH => 8)
+))
+
+register_primitive!(PrimitiveSpec(
+    :barrett_reduction,
+    "nexus_barrett_reduction",
+    "primitives/nexus_barrett_reduction.sv",
+    3,
+    Dict(:LANES => 4, :DATA_WIDTH => 8)
+))
+
+register_primitive!(PrimitiveSpec(
+    :montgomery_multiplier,
+    "nexus_montgomery_multiplier",
+    "primitives/nexus_montgomery_multiplier.sv",
+    3,
+    Dict(:LANES => 4, :DATA_WIDTH => 8, :R => 1024, :N => 997, :N_INV_MOD_N => 493)
 ))
 
 register_primitive!(PrimitiveSpec(
