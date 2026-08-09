@@ -37,7 +37,15 @@ module cvxif_nexus_shell (
     input  logic        x_result_ready_i,
     output logic [4:0]  x_result_id_o,
     output logic [31:0] x_result_data_o,
-    output logic [4:0]  x_result_rd_o
+    output logic [4:0]  x_result_rd_o,
+
+    // Datapath interface — connects to nexus_mux
+    output logic        dp_start_o,
+    output logic [31:0] dp_rs1_o,
+    output logic [31:0] dp_rs2_o,
+    output logic [2:0]  dp_funct3_o,
+    input  logic [31:0] dp_rd_i,
+    input  logic        dp_done_i
 );
 
 // --------------------------------------------------------------------------
@@ -56,35 +64,16 @@ state_t state_q, state_n;
 // Saved instruction context (registered on issue handshake)
 // --------------------------------------------------------------------------
 logic [31:0] saved_rs1_q, saved_rs2_q;
+logic [31:0] saved_instr_q;
 logic [4:0]  saved_id_q;
 logic [4:0]  saved_rd_addr_q;
 
 // --------------------------------------------------------------------------
-// Datapath interface (connect to the auto-generated module here)
-//
-// To plug in a generated module:
-//   1. Instantiate it below with the signals dp_start, dp_rs1, dp_rs2, dp_rd, dp_done.
-//   2. Remove the stub assignments.
+// Datapath operand routing
 // --------------------------------------------------------------------------
-logic        dp_start;
-logic [31:0] dp_rs1, dp_rs2;
-logic [31:0] dp_rd;
-logic        dp_done;
-
-// -- Datapath operand routing --
-assign dp_rs1 = saved_rs1_q;
-assign dp_rs2 = saved_rs2_q;
-
-// -- Instantiate the generated datapath --
-mac_plus_5 u_datapath (
-    .clk_i   (clk_i),
-    .rst_ni  (rst_ni),
-    .start_i (dp_start),
-    .rs1_i   (dp_rs1),
-    .rs2_i   (dp_rs2),
-    .rd_o    (dp_rd),
-    .done_o  (dp_done)
-);
+assign dp_rs1_o    = saved_rs1_q;
+assign dp_rs2_o    = saved_rs2_q;
+assign dp_funct3_o = saved_instr_q[14:12];  // funct3 field from RISC-V instruction
 
 // --------------------------------------------------------------------------
 // Combinational FSM
@@ -99,7 +88,7 @@ always_comb begin
     x_result_id_o        = 5'b0;
     x_result_rd_o        = 5'b0;
     x_result_data_o      = 32'b0;
-    dp_start             = 1'b0;
+    dp_start_o            = 1'b0;
 
     case (state_q)
 
@@ -122,14 +111,14 @@ always_comb begin
                 if (x_commit_kill_i)
                     state_n = IDLE;         // Branch mispredict — flush
                 else begin
-                    dp_start = 1'b1;        // Kick off the datapath
+                    dp_start_o = 1'b1;        // Kick off the datapath
                     state_n  = WAIT_DATAPATH;
                 end
             end
         end
 
         WAIT_DATAPATH: begin
-            if (dp_done)
+            if (dp_done_i)
                 state_n = SEND_RESULT;
         end
 
@@ -137,7 +126,7 @@ always_comb begin
             x_result_valid_o = 1'b1;
             x_result_id_o    = saved_id_q;
             x_result_rd_o    = saved_rd_addr_q;
-            x_result_data_o  = dp_rd;
+            x_result_data_o  = dp_rd_i;
             if (x_result_ready_i)
                 state_n = IDLE;
         end
@@ -153,6 +142,7 @@ always_ff @(posedge clk_i or negedge rst_ni) begin
         state_q         <= IDLE;
         saved_rs1_q     <= 32'b0;
         saved_rs2_q     <= 32'b0;
+        saved_instr_q   <= 32'b0;
         saved_id_q      <= 5'b0;
         saved_rd_addr_q <= 5'b0;
     end else begin
@@ -162,6 +152,7 @@ always_ff @(posedge clk_i or negedge rst_ni) begin
         if (x_issue_req_valid_i && x_issue_req_ready_o) begin
             saved_rs1_q     <= x_issue_req_rs1_i;
             saved_rs2_q     <= x_issue_req_rs2_i;
+            saved_instr_q   <= x_issue_req_instr_i;
             saved_id_q      <= x_issue_req_id_i;
             saved_rd_addr_q <= x_issue_req_instr_i[11:7]; // rd field of R-type
         end

@@ -20,12 +20,12 @@ include("../hw/src_hw/Scheduler.jl")   # plain include, uses DFG_Builder types i
 include("../hw/src_hw/VerilogEmitter.jl")
 
 # Build — latency 0 means "use OP_LATENCY default"
-node_1 = DFGNode(1, OP_ARG,   32, [],    nothing, 0, 0)
-node_2 = DFGNode(2, OP_ARG,   32, [],    nothing, 0, 0)
-node_3 = DFGNode(3, OP_CONST, 32, [],    5,       0, 0)
-node_4 = DFGNode(4, OP_MUL,   32, [1,2], nothing, 0, 0)
-node_5 = DFGNode(5, OP_ADD,   32, [4,3], nothing, 0, 0)
-node_6 = DFGNode(6, OP_RET,   32, [5],   nothing, 0, 0)
+node_1 = DFGNode(1, OP_ARG,   32, [],    nothing, 0, 0, nothing, Dict())
+node_2 = DFGNode(2, OP_ARG,   32, [],    nothing, 0, 0, nothing, Dict())
+node_3 = DFGNode(3, OP_CONST, 32, [],    5,       0, 0, nothing, Dict())
+node_4 = DFGNode(4, OP_MUL,   32, [1,2], nothing, 0, 0, nothing, Dict())
+node_5 = DFGNode(5, OP_ADD,   32, [4,3], nothing, 0, 0, nothing, Dict())
+node_6 = DFGNode(6, OP_RET,   32, [5],   nothing, 0, 0, nothing, Dict())
 
 graph = HWGraph(
   "mac_plus_5",

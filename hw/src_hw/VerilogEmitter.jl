@@ -42,7 +42,7 @@ function emit_verilog(graph::HWGraph, filepath::String)
         push!(by_cycle[node.scheduled_cycle], id)
     end
 
-    port_names = ["rs1_i", "rs2_i", "rs3_i", "rs4_i"]
+    port_names = ["rs1_i", "rs2_i", "rs3_i", "rs4_i", "rs5_i", "rs6_i", "rs7_i", "rs8_i"]
 
     # Resolve a dependency node to the correct SV signal at a given consumer cycle.
     # If the dependency finishes before the consumer starts, use the final
@@ -71,7 +71,11 @@ function emit_verilog(graph::HWGraph, filepath::String)
     push!(lines, "    input  logic        clk_i,")
     push!(lines, "    input  logic        rst_ni,")
     push!(lines, "    input  logic        start_i,")
-    for (k, _) in enumerate(arg_ids)
+    # Canonical 2-input interface — always emit rs1_i and rs2_i
+    push!(lines, "    input  logic [$(W-1):0] rs1_i,")
+    push!(lines, "    input  logic [$(W-1):0] rs2_i,")
+    # Extra inputs beyond 2
+    for k in 3:length(arg_ids)
         push!(lines, "    input  logic [$(W-1):0] $(port_names[k]),")
     end
     push!(lines, "    output logic [$(W-1):0] rd_o,")
@@ -114,11 +118,18 @@ function emit_verilog(graph::HWGraph, filepath::String)
     for cyc in 1:max_cycle
         for id in by_cycle[cyc]
             node  = graph.nodes[id]
-            sv_op = op_to_sv(node.op)
             lhs   = comb_wire(id)
-            rhs_a = resolve(node.inputs[1], cyc)
-            rhs_b = resolve(node.inputs[2], cyc)
-            push!(lines, "    assign $lhs = $rhs_a $sv_op $rhs_b;")
+            if node.op == OP_MUX
+                rhs_cond = resolve(node.inputs[1], cyc)
+                rhs_true = resolve(node.inputs[2], cyc)
+                rhs_false = resolve(node.inputs[3], cyc)
+                push!(lines, "    assign $lhs = |$rhs_cond ? $rhs_true : $rhs_false;")
+            else
+                sv_op = op_to_sv(node.op)
+                rhs_a = resolve(node.inputs[1], cyc)
+                rhs_b = resolve(node.inputs[2], cyc)
+                push!(lines, "    assign $lhs = $rhs_a $sv_op $rhs_b;")
+            end
         end
     end
     push!(lines, "")

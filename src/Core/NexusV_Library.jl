@@ -1,19 +1,45 @@
 module PrimitiveLibrary
 
-struct Primitive
-    name::String
+export PrimitiveSpec, PRIMITIVES, register_primitive!
+
+# Metadata for one hardware primitive in the registry.
+#
+# - name:        Symbol key, e.g. :simd_mac
+# - module_name: Verilog top-level module, e.g. "nexus_simd_mac"
+# - file_path:   relative to hw/rtl/, e.g. "primitives/nexus_simd_mac.sv"
+# - latency:     pipeline depth in cycles
+# - params:      default parameter overrides, e.g. Dict(:LANES => 4, :DATA_WIDTH => 8)
+struct PrimitiveSpec
+    name::Symbol
     module_name::String
-    parameters::Dict{Symbol,Any} # "primitives/nexus_simd_mac.sv", relative to hw/rtl/
-    file::String 
+    file_path::String
     latency::Int
+    params::Dict{Symbol,Any}
 end
 
 const PRIMITIVES = Dict{Symbol,PrimitiveSpec}()
-register_primitive!(spec::PrimitiveSpec) = (PRIMITIVES[spec.name] = spec)
+
+function register_primitive!(spec::PrimitiveSpec)
+    PRIMITIVES[spec.name] = spec
+    println("[PrimitiveLibrary] Registered :$(spec.name) → $(spec.module_name) (latency=$(spec.latency))")
+end
+
+# ── Built-in primitives ───────────────────────────────────────────────────────
 
 register_primitive!(PrimitiveSpec(
-    :simd_mac, "nexus_simd_mac", "primitives/nexus_simd_mac.sv",
-    1, Dict(:LANES => 4, :DATA_WIDTH => 8)
+    :simd_mac,
+    "nexus_simd_mac",
+    "primitives/nexus_simd_mac.sv",
+    3,
+    Dict(:LANES => 4, :DATA_WIDTH => 8)
+))
+
+register_primitive!(PrimitiveSpec(
+    :saturating_add,
+    "nexus_saturating_add",
+    "primitives/nexus_saturating_add.sv",
+    2,
+    Dict(:LANES => 4, :DATA_WIDTH => 8)
 ))
 
 end # module PrimitiveLibrary

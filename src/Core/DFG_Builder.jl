@@ -1,7 +1,7 @@
 module DFG_Builder
 
 export Opcode, OP_ARG, OP_CONST, OP_ADD, OP_SUB, OP_MUL, OP_RET
-export OP_SHR, OP_SHL, OP_AND, OP_OR, OP_XOR, OP_MOD
+export OP_SHR, OP_SHL, OP_AND, OP_OR, OP_XOR, OP_MOD, OP_MUX, OP_PRIMITIVE
 export DFGNode, HWGraph, OP_LATENCY
 
 @enum Opcode begin
@@ -16,6 +16,7 @@ export DFGNode, HWGraph, OP_LATENCY
     OP_OR     # Bitwise OR
     OP_XOR    # Bitwise XOR
     OP_MOD    # Modulo (remainder)
+    OP_MUX    # Ternary select: cond ? a : b  (3 inputs)
     OP_RET    # Return / output node
 
     OP_PRIMITIVE
@@ -37,6 +38,7 @@ const OP_LATENCY = Dict{Opcode,Int}(
     OP_OR    => 1,
     OP_XOR   => 1,
     OP_MOD   => 3,
+    OP_MUX   => 1,
 )
 
 # A single node in the Data Flow Graph.

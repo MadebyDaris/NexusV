@@ -132,6 +132,13 @@ module nexus_top (
     // ──────────────────────────────────────────────────────────────────────
     // NexusV Coprocessor Shell
     // ──────────────────────────────────────────────────────────────────────
+
+    logic        shell_start;
+    logic [31:0] shell_rs1, shell_rs2;
+    logic [2:0]  shell_funct3;
+    logic [31:0] shell_rd;
+    logic        shell_done;
+
     cvxif_nexus_shell u_shell (
         .clk_i  (clk_i),
         .rst_ni (rst_ni),
@@ -158,7 +165,29 @@ module nexus_top (
         .x_result_ready_i (ext_if.result_ready),
         .x_result_id_o    (ext_if.result.id),
         .x_result_data_o  (ext_if.result.data),
-        .x_result_rd_o    (ext_if.result.rd)
+        .x_result_rd_o    (ext_if.result.rd),
+
+        // Datapath interface → mux
+        .dp_start_o  (shell_start),
+        .dp_rs1_o    (shell_rs1),
+        .dp_rs2_o    (shell_rs2),
+        .dp_funct3_o (shell_funct3),
+        .dp_rd_i     (shell_rd),
+        .dp_done_i   (shell_done)
+    );
+
+    // ──────────────────────────────────────────────────────────────────────
+    // NexusV Dispatcher Mux — routes shell → selected datapath → shell
+    // ──────────────────────────────────────────────────────────────────────
+    nexus_mux u_mux (
+        .clk_i    (clk_i),
+        .rst_ni   (rst_ni),
+        .start_i  (shell_start),
+        .funct3_i (shell_funct3),
+        .rs1_i    (shell_rs1),
+        .rs2_i    (shell_rs2),
+        .rd_o     (shell_rd),
+        .done_o   (shell_done)
     );
 
     // ──────────────────────────────────────────────────────────────────────

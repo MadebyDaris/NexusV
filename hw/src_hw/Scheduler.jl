@@ -64,7 +64,11 @@ function schedule_asap!(graph::HWGraph)
         end
 
         if node.op == OP_PRIMITIVE
-            node.latency = PRIMITIVES[node.primitive].latency
+            if @isdefined(PRIMITIVES)
+                node.latency = PRIMITIVES[node.primitive].latency
+            else
+                error("OP_PRIMITIVE node $(node.id) requires PrimitiveLibrary to be loaded")
+            end
         elseif node.latency == 0 && node.op ∉ (OP_ARG, OP_CONST, OP_RET)
             node.latency = OP_LATENCY[node.op]
         end
