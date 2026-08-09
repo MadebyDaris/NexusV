@@ -59,7 +59,13 @@ function schedule_asap!(graph::HWGraph)
         node = graph.nodes[id]
 
         # Set default latency from the opcode table if not already assigned
-        if node.latency == 0 && node.op ∉ (OP_ARG, OP_CONST, OP_RET)
+        if node.latency == 0 && node.op ∉ (OP_ARG, OP_CONST, OP_RET, OP_PRIMITIVE)
+            node.latency = OP_LATENCY[node.op]
+        end
+
+        if node.op == OP_PRIMITIVE
+            node.latency = PRIMITIVES[node.primitive].latency
+        elseif node.latency == 0 && node.op ∉ (OP_ARG, OP_CONST, OP_RET)
             node.latency = OP_LATENCY[node.op]
         end
 

@@ -17,6 +17,8 @@ export DFGNode, HWGraph, OP_LATENCY
     OP_XOR    # Bitwise XOR
     OP_MOD    # Modulo (remainder)
     OP_RET    # Return / output node
+
+    OP_PRIMITIVE
 end
 
 # Default cycle latency per opcode.
@@ -53,6 +55,8 @@ mutable struct DFGNode
     const_val::Union{Nothing,Int}
     scheduled_cycle::Int
     latency::Int
+    primitive::Union{Nothing,Symbol}
+    primitive_params::Dict{Symbol,Any}
 end
 
 # The top-level Data Flow Graph.
