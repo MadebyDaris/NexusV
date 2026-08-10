@@ -1,0 +1,48 @@
+module nexus_skid_buffer #(
+    parameter int DATA_WIDTH = 32,
+    parameter int BUFFER_DEPTH = 4
+) (
+    input  logic                     clk_i,
+    input  logic                     rst_ni,
+    input  logic                     stall_i,
+
+    // Slave interface Upstream
+    input logic s_valid,
+    output logic s_ready,
+    input logic [DATA_WIDTH-1:0] s_data,
+
+    // Master interface Downstream
+    output logic m_valid,
+    input logic m_ready,
+    output logic [DATA_WIDTH-1:0] m_data
+);
+
+    logic [DATA_WIDTH-1:0] buffer [BUFFER_DEPTH-1:0];
+    logic [$clog2(BUFFER_DEPTH):0] head, tail;
+    logic [$clog2(BUFFER_DEPTH):0] count;
+
+    assign m_valid = (count > 0);
+    assign m_data = buffer[head];
+
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            head <= 0;
+            tail <= 0;
+            count <= 0;
+        end else begin
+            if (s_valid && s_ready) begin
+                buffer[tail] <= s_data;
+                tail <= (tail + 1) % BUFFER_DEPTH;
+                count <= count + 1;
+            end
+
+            if (m_valid && m_ready) begin
+                head <= (head + 1) % BUFFER_DEPTH;
+                count <= count - 1;
+            end
+        end
+    end
+
+    assign s_ready = (count < BUFFER_DEPTH);
+
+endmodule
