@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
     // Initialise all inputs
     dut->clk_i               = 0;
     dut->rst_ni              = 0;
+    dut->stall_i             = 0;
     dut->x_issue_req_valid_i = 0;
     dut->x_issue_req_instr_i = 0;
     dut->x_issue_req_rs1_i   = 0;
@@ -78,8 +79,16 @@ int main(int argc, char** argv) {
     tick(dut);
     dut->x_commit_valid_i = 0;
 
-    // Wait for result (poll up to 10 cycles)
-    int timeout = 10;
+    // Inject stall mid-computation to prove datapath resumes cleanly
+    std::cout << "  Injecting stall for 3 cycles..." << std::endl;
+    dut->stall_i = 1;
+    tick(dut);
+    tick(dut);
+    tick(dut);
+    dut->stall_i = 0;
+
+    // Wait for result (poll up to 15 cycles)
+    int timeout = 15;
     while (!dut->x_result_valid_o && timeout-- > 0)
         tick(dut);
 

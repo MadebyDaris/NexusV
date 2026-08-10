@@ -12,6 +12,7 @@ module nexus_montgomery_multiplier #(
 )(
     input logic clk,
     input logic rst_n,
+    input logic stall_i,
     input logic start,
     output logic done_0,
 
@@ -87,7 +88,7 @@ module nexus_montgomery_multiplier #(
             carry_N <= 0;
             final_t_k <= 0;
             borrow <= 0;
-        end else begin
+        end else if (!stall_i) begin
             state <= next_state;
             i_reg <= i_next;
             j_reg <= j_next;

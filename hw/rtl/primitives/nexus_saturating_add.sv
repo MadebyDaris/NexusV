@@ -19,6 +19,7 @@ module nexus_saturating_add #(
     input  logic                     clk_i,
     input  logic                     rst_ni,
     input  logic                     start_i,
+    input  logic                     stall_i,
     input  logic [LANES*DATA_WIDTH-1:0] rs1_i,
     input  logic [LANES*DATA_WIDTH-1:0] rs2_i,
     output logic [LANES*DATA_WIDTH-1:0] rd_o,
@@ -68,7 +69,7 @@ module nexus_saturating_add #(
         if (!rst_ni) begin
             rd_o   <= '0;
             done_o <= 1'b0;
-        end else begin
+        end else if (!stall_i) begin
             done_o <= 1'b0;
             if (start_i) begin
                 rd_o   <= rd_comb;
@@ -79,10 +80,12 @@ module nexus_saturating_add #(
 
     // ── Pipeline registers ────────────────────────────────────────────────
     always_ff @(posedge clk_i) begin
-        for (int k = 0; k < LANES; k++) begin
-            sum_ext_r[k]  <= sum_ext[k];
-            overflow_r[k]  <= overflow[k];
-            underflow_r[k] <= underflow[k];
+        if (!stall_i) begin
+            for (int k = 0; k < LANES; k++) begin
+                sum_ext_r[k]  <= sum_ext[k];
+                overflow_r[k]  <= overflow[k];
+                underflow_r[k] <= underflow[k];
+            end
         end
     end
 

@@ -2,7 +2,7 @@ module nexus_axi_lite_master #(
     parameter int ADDR_WIDTH = 32,
     parameter int DATA_WIDTH = 32
 ) (
-    input  logic                     aclk_i,
+    input  logic                     clk_i,
     input  logic                     rst_ni,
     // Internal Request Interface
     input  logic                     req_valid_i,

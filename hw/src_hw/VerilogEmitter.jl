@@ -71,6 +71,7 @@ function emit_verilog(graph::HWGraph, filepath::String)
     push!(lines, "    input  logic        clk_i,")
     push!(lines, "    input  logic        rst_ni,")
     push!(lines, "    input  logic        start_i,")
+    push!(lines, "    input  logic        stall_i,")
     # Canonical 2-input interface — always emit rs1_i and rs2_i
     push!(lines, "    input  logic [$(W-1):0] rs1_i,")
     push!(lines, "    input  logic [$(W-1):0] rs2_i,")
@@ -144,7 +145,7 @@ function emit_verilog(graph::HWGraph, filepath::String)
                 push!(lines, "            $(reg_wire(id, cyc)) <= '0;")
             end
         end
-        push!(lines, "        end else begin")
+        push!(lines, "        end else if (!stall_i) begin")
         for (id, node) in graph.nodes
             node.op in (OP_ARG, OP_CONST, OP_RET) && continue
             fc = finish_cycle(node)
@@ -182,7 +183,7 @@ function emit_verilog(graph::HWGraph, filepath::String)
     else
         push!(lines, "            done_shift <= '0;")
     end
-    push!(lines, "        end else begin")
+    push!(lines, "        end else if (!stall_i) begin")
     if max_cycle == 1
         push!(lines, "            done_r <= start_i;")
     else

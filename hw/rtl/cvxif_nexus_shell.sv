@@ -14,6 +14,7 @@ import cv32e40x_pkg::*;
 module cvxif_nexus_shell (
     input  logic        clk_i,
     input  logic        rst_ni,
+    input  logic        stall_i,
 
     // CV-X-IF Issue Channel
     input  logic        x_issue_req_valid_i,
@@ -41,6 +42,7 @@ module cvxif_nexus_shell (
 
     // Datapath interface — connects to nexus_mux
     output logic        dp_start_o,
+    output logic        dp_stall_o,
     output logic [31:0] dp_rs1_o,
     output logic [31:0] dp_rs2_o,
     output logic [2:0]  dp_funct3_o,
@@ -71,6 +73,7 @@ logic [4:0]  saved_rd_addr_q;
 // --------------------------------------------------------------------------
 // Datapath operand routing
 // --------------------------------------------------------------------------
+assign dp_stall_o  = stall_i;
 assign dp_rs1_o    = saved_rs1_q;
 assign dp_rs2_o    = saved_rs2_q;
 assign dp_funct3_o = saved_instr_q[14:12];  // funct3 field from RISC-V instruction

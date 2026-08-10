@@ -91,3 +91,8 @@ function schedule_asap!(graph::HWGraph)
 
     return graph
 end
+
+function schedule_alap!(graph::HWGraph)
+    in_degree = Dict(id => 0 for id in keys(graph.nodes))
+
+end

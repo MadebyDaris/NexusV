@@ -33,13 +33,17 @@ module nexus_skid_buffer #(
             if (s_valid && s_ready) begin
                 buffer[tail] <= s_data;
                 tail <= (tail + 1) % BUFFER_DEPTH;
-                count <= count + 1;
             end
 
             if (m_valid && m_ready) begin
                 head <= (head + 1) % BUFFER_DEPTH;
-                count <= count - 1;
             end
+
+            unique case ({s_valid && s_ready, m_valid && m_ready})
+                2'b10:   count <= count + 1;
+                2'b01:   count <= count - 1;
+                default: count <= count;
+            endcase
         end
     end
 

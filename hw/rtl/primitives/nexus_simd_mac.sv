@@ -21,6 +21,7 @@ module nexus_simd_mac #(
     input  logic                     clk_i,
     input  logic                     rst_ni,
     input  logic                     start_i,
+    input  logic                     stall_i,
     input  logic [LANES*DATA_WIDTH-1:0] rs1_i,
     input  logic [LANES*DATA_WIDTH-1:0] rs2_i,
     output logic [31:0]                 rd_o,
@@ -59,7 +60,7 @@ module nexus_simd_mac #(
             acc_q  <= '0;
             rd_o   <= '0;
             done_o <= 1'b0;
-        end else begin
+        end else if (!stall_i) begin
             done_o <= 1'b0;
             if (start_i) begin
                 acc_q  <= acc_q + sum_r;
@@ -70,10 +71,12 @@ module nexus_simd_mac #(
     end
 
     always_ff @(posedge clk_i) begin
-        for (int k = 0; k < LANES; k++) begin
-            prod_r[k] <= prod[k];
+        if (!stall_i) begin
+            for (int k = 0; k < LANES; k++) begin
+                prod_r[k] <= prod[k];
+            end
+            sum_r <= sum_comb;
         end
-        sum_r <= sum_comb;
     end
 
 endmodule
