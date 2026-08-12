@@ -15,10 +15,34 @@ static vluint64_t sim_time = 0;
 double sc_time_stamp() { return sim_time; } // Called by $time in Verilog
 
 
-// Tick the DUT for one clock cycle on edge rise
+static int dp_timer = 0;
+static bool dp_running = false;
+
 static void tick(Vcvxif_nexus_shell* dut) {
-    dut->clk_i = 0; dut->eval(); sim_time++;
-    dut->clk_i = 1; dut->eval(); sim_time++;
+    dut->clk_i = 0; 
+    dut->eval(); 
+    sim_time++;
+
+    if (dut->dp_start_o && !dp_running) {
+        dp_running = true;
+        dp_timer = 4; // 4 cycle latency
+    }
+    
+    if (dp_running && !dut->stall_i) { // assume datapath respects stall
+        if (dp_timer > 0) dp_timer--;
+    }
+    
+    if (dp_running && dp_timer == 0) {
+        dut->dp_done_i = 1;
+        dut->dp_rd_i = (dut->dp_rs1_o * dut->dp_rs2_o) + 5;
+        dp_running = false;
+    } else {
+        dut->dp_done_i = 0;
+    }
+
+    dut->clk_i = 1; 
+    dut->eval(); 
+    sim_time++;
 }
 
 int main(int argc, char** argv) {

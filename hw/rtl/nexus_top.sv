@@ -35,7 +35,7 @@ module nexus_top (
     // ──────────────────────────────────────────────────────────────────────
     if_xif #() ext_if ();
 
-    wire boot_select_w = 1'b1;
+    wire boot_select_w = 1'b0;   // 0 = JTAG/Testbench, 1 = SPI Flash
     
     // Power management loopback with 15-cycle delay
     localparam SWITCH_ACK_LATENCY = 15;
@@ -100,21 +100,39 @@ module nexus_top (
         .external_subsystem_powergate_switch_ack_ni   (external_subsystem_powergate_switch_ack_n[SWITCH_ACK_LATENCY]),
 
         // Debug
+        .ext_debug_master_req_o  (),
         .ext_debug_master_resp_i ('0),
 
         // DMA external ports (tie off)
+        .ext_dma_read_req_o   (),
         .ext_dma_read_resp_i  ('0),
+        .ext_dma_write_req_o  (),
         .ext_dma_write_resp_i ('0),
+        .ext_dma_addr_req_o   (),
         .ext_dma_addr_resp_i  ('0),
+        .hw_fifo_req_o        (),
         .hw_fifo_resp_i       ('0),
         .ext_dma_slot_tx_i    ('0),
         .ext_dma_slot_rx_i    ('0),
         .ext_dma_stop_i       ('0),
         .hw_fifo_done_i       ('0),
+        .dma_done_o           (),
 
         // AO/peripheral slave (tie off)
         .ext_ao_peripheral_req_i     ('0),
+        .ext_ao_peripheral_resp_o    (),
+        .ext_peripheral_slave_req_o  (),
         .ext_peripheral_slave_resp_i ('0),
+        
+        // External Master
+        .ext_xbar_master_req_i       ('0),
+        .ext_xbar_master_resp_o      (),
+        
+        // Unused power domains
+        .external_subsystem_powergate_iso_no   (),
+        .external_subsystem_rst_no             (),
+        .external_ram_banks_set_retentive_no   (),
+        .external_subsystem_clkgate_en_no      (),
 
         // Exit
         .exit_value_o (exit_value_o),
@@ -138,6 +156,12 @@ module nexus_top (
     logic [31:0] shell_rd;
     logic        shell_done;
 
+    // ──────────────────────────────────────────────────────────────────────
+    // Tie off unused CV-X-IF interface fields
+    // ──────────────────────────────────────────────────────────────────────
+
+    logic shell_issue_accept;
+
     cvxif_nexus_shell u_shell (
         .clk_i  (clk_i),
         .rst_ni (rst_ni),
@@ -151,7 +175,7 @@ module nexus_top (
         .x_issue_req_id_i      (ext_if.issue_req.id),
 
         .x_issue_resp_valid_o  (),
-        .x_issue_resp_accept_o (ext_if.issue_resp.accept),
+        .x_issue_resp_accept_o (shell_issue_accept),
         .x_issue_resp_id_o     (),
 
         // Commit channel
@@ -168,6 +192,7 @@ module nexus_top (
 
         // Datapath interface → mux
         .dp_start_o  (shell_start),
+        .dp_stall_o  (),
         .dp_rs1_o    (shell_rs1),
         .dp_rs2_o    (shell_rs2),
         .dp_funct3_o (shell_funct3),
@@ -190,11 +215,8 @@ module nexus_top (
         .done_o   (shell_done)
     );
 
-    // ──────────────────────────────────────────────────────────────────────
-    // Tie off unused CV-X-IF interface fields
-    // ──────────────────────────────────────────────────────────────────────
-
-    // Issue response — fields the shell doesn't drive
+    // Issue response
+    assign ext_if.issue_resp.accept    = shell_issue_accept;
     assign ext_if.issue_resp.writeback = 1'b1;   // We write back to rd
     assign ext_if.issue_resp.dualwrite = 1'b0;
     assign ext_if.issue_resp.dualread  = 3'b0;
@@ -211,12 +233,14 @@ module nexus_top (
     assign ext_if.result.err     = 1'b0;
     assign ext_if.result.dbg     = 1'b0;
 
-    // Compressed channel — not used
-    assign ext_if.compressed_ready = 1'b0;
+    // Compressed channel — we don't support compressed custom instructions,
+    // but we MUST be ready to accept and reject them, otherwise the CPU IF stage hangs!
+    assign ext_if.compressed_ready = 1'b1;
     assign ext_if.compressed_resp  = '0;
 
     // Memory channel — not used
     assign ext_if.mem_valid = 1'b0;
     assign ext_if.mem_req   = '0;
+
 
 endmodule

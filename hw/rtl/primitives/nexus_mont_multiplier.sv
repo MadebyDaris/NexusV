@@ -101,6 +101,12 @@ module nexus_montgomery_multiplier #(
         end
     end
 
+    logic [32:0] final_sum;
+    assign final_sum = carry_A + carry_N + read_T;
+
+    logic [32:0] sub_res;
+    assign sub_res = {1'b0, read_T} - {1'b0, data_N} - {32'd0, borrow};
+
     always_comb begin
         next_state = state;
         i_next = i_reg;
@@ -186,9 +192,6 @@ module nexus_montgomery_multiplier #(
             end
 
             ST_FLUSH_CARRIES_0: begin
-                logic [32:0] final_sum;
-                final_sum = carry_A + carry_N + read_T;
-                
                 addr_T = NUM_WORDS - 1;
                 we_T = 1;
                 write_T = final_sum[31:0];
@@ -254,9 +257,6 @@ module nexus_montgomery_multiplier #(
             end
 
             ST_FINAL_REDUCE_SUB_WAIT: begin
-                logic [32:0] sub_res;
-                sub_res = {1'b0, read_T} - {1'b0, data_N} - {32'd0, borrow};
-                
                 addr_T = j_reg;
                 we_T = 1;
                 write_T = sub_res[31:0];

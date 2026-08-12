@@ -11,12 +11,11 @@ is_primitive_node(node) = hasproperty(node, :primitive) && node.primitive !== no
 resource_key(node) = is_primitive_node(node) ? node.primitive : node.op
 
 function opcode_latency(op)
-    return getproperty(getfield(Main, :DFG_Builder), :OP_LATENCY)[op]
+    return OP_LATENCY[op]
 end
 
 function primitive_latency(node)
-    primitives = getfield(Main, :PrimitiveLibrary).PRIMITIVES
-    return primitives[node.primitive].latency
+    return PRIMITIVES[node.primitive].latency
 end
 
 # The cycle on which a node's result becomes available for consumers.
@@ -73,16 +72,8 @@ end
 function schedule_asap!(graph::HWGraph; resources=Dict())
     # First: assign latencies where unspecified
     for node in values(graph.nodes)
-        if node.latency == 0 && !(node.op == OP_ARG || node.op == OP_CONST || node.op == OP_RET || is_primitive_node(node))
-            node.latency = opcode_latency(node.op)
-        end
-        # get the latency of primitive nodes from the primitive library
         if is_primitive_node(node)
-            if isdefined(Main, :PrimitiveLibrary)
-                node.latency = primitive_latency(node)
-            else
-                error("OP_PRIMITIVE node $(node.id) requires PrimitiveLibrary to be loaded")
-            end
+            node.latency = primitive_latency(node)
         elseif node.latency == 0 && !(node.op == OP_ARG || node.op == OP_CONST || node.op == OP_RET)
             node.latency = opcode_latency(node.op)
         end

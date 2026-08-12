@@ -66,9 +66,17 @@ verilator \
     -Wno-UNDRIVEN -Wno-LITENDIAN -Wno-IMPLICIT \
     -Wno-IMPORTSTAR -Wno-VARHIDDEN -Wno-EOFNEWLINE \
     -Wno-ASSIGNIN -Wno-PINMISSING -Wno-UNOPTFLAT -Wno-DECLFILENAME \
+    -Wno-UNSIGNED -Wno-LATCH \
     --language 1800-2012 \
     -f "$VC_OUT" \
     "$RTL/mac_plus_5.sv" \
+    "$RTL/crc_step.sv" \
+    "$RTL/primitives/nexus_simd_mac.sv" \
+    "$RTL/primitives/nexus_saturating_add.sv" \
+    "$RTL/primitives/nexus_barrett_reduction.sv" \
+    "$RTL/primitives/nexus_mont_multiplier.sv" \
+    "$RTL/primitives/nexus_mont_adapter.sv" \
+    "$RTL/nexus_mux.sv" \
     "$RTL/cvxif_nexus_shell.sv" \
     "$RTL/nexus_top.sv" \
     "$TB/tb_nexus_system.sv" \

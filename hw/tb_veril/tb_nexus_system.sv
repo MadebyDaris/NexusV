@@ -30,7 +30,7 @@ module tb_nexus_system (
         if ($value$plusargs("firmware=%s", hex_file)) begin
             $readmemh(hex_file, u_top.u_x_heep.core_v_mini_mcu_i.memory_subsystem_i.ram0_i.tc_ram_i.sram);
         end else begin
-            $readmemh("sw/custom_c/test_mac.hex", u_top.u_x_heep.core_v_mini_mcu_i.memory_subsystem_i.ram0_i.tc_ram_i.sram);
+            $readmemh("sw/custom_c/minimal.hex", u_top.u_x_heep.core_v_mini_mcu_i.memory_subsystem_i.ram0_i.tc_ram_i.sram);
         end
         $display("[TB] SRAM[0] = %h", u_top.u_x_heep.core_v_mini_mcu_i.memory_subsystem_i.ram0_i.tc_ram_i.sram[0]);
         $display("[TB] SRAM[1] = %h", u_top.u_x_heep.core_v_mini_mcu_i.memory_subsystem_i.ram0_i.tc_ram_i.sram[1]);
@@ -41,6 +41,12 @@ module tb_nexus_system (
     export "DPI-C" task tb_set_exit_loop;
     task tb_set_exit_loop;
         u_top.u_x_heep.core_v_mini_mcu_i.ao_peripheral_subsystem_i.soc_ctrl_i.testbench_set_exit_loop[0] = 1'b1;
+    endtask
+
+    export "DPI-C" task tb_set_boot_address;
+    task tb_set_boot_address;
+        // Force BOOT_ADDRESS register to 0x00000000 (start of SRAM)
+        force u_top.u_x_heep.core_v_mini_mcu_i.ao_peripheral_subsystem_i.soc_ctrl_i.soc_ctrl_reg_top_i.u_boot_address.qs = 32'h00000000;
     endtask
 
     // Instruction Memory Interface (Unused since we boot from internal RAM)

@@ -2,7 +2,7 @@
 
 julia_version = "1.11.9"
 manifest_format = "2.0"
-project_hash = "67a2d3af989bad239fe85c6bb424a21d26cd9dd0"
+project_hash = "060571282fdcb5a31784c3d4155e33a0352b668f"
 
 [[deps.AbstractTrees]]
 git-tree-sha1 = "2d9c9a55f9c93e8887ad391fbae72f8ef55e1177"
@@ -30,6 +30,12 @@ version = "0.5.0"
 git-tree-sha1 = "3c31a4b8fbd0281c599fa2004b3e6ad6ebe725d5"
 uuid = "9db33cc3-5358-4881-8759-fa4194144afd"
 version = "0.4.2"
+
+[[deps.DataStructures]]
+deps = ["OrderedCollections"]
+git-tree-sha1 = "b0bc6d2cad1fed8b7fd59a1551a991cb3d2809e6"
+uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+version = "0.19.6"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -174,6 +180,11 @@ version = "2023.12.12"
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
+
+[[deps.OrderedCollections]]
+git-tree-sha1 = "05f45c2e0de6259db764adbfd2f1dc6d3f8de13c"
+uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
+version = "2.0.1"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
