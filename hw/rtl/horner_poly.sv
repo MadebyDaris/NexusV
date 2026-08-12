@@ -5,6 +5,7 @@ module horner_poly (
     input  logic        clk_i,
     input  logic        rst_ni,
     input  logic        start_i,
+    input  logic        stall_i,
     input  logic [31:0] rs1_i,
     input  logic [31:0] rs2_i,
     input  logic [31:0] rs3_i,
@@ -54,7 +55,7 @@ module horner_poly (
             n10_r9 <= '0;
             n11_r10 <= '0;
             n9_r7 <= '0;
-        end else begin
+        end else if (!stall_i) begin
             n7_r4 <= n7_comb;
             n8_r5 <= n8_comb;
             n8_r6 <= n8_r5;
@@ -72,7 +73,7 @@ module horner_poly (
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
             done_shift <= '0;
-        end else begin
+        end else if (!stall_i) begin
             done_shift <= {done_shift[8:0], start_i};
         end
     end

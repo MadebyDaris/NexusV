@@ -5,6 +5,7 @@ module mac_plus_5 (
     input  logic        clk_i,
     input  logic        rst_ni,
     input  logic        start_i,
+    input  logic        stall_i,
     input  logic [31:0] rs1_i,
     input  logic [31:0] rs2_i,
     output logic [31:0] rd_o,
@@ -31,7 +32,7 @@ module mac_plus_5 (
             n5_r4 <= '0;
             n4_r2 <= '0;
             n4_r3 <= '0;
-        end else begin
+        end else if (!stall_i) begin
             n5_r4 <= n5_comb;
             n4_r2 <= n4_comb;
             n4_r3 <= n4_r2;
@@ -43,7 +44,7 @@ module mac_plus_5 (
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
             done_shift <= '0;
-        end else begin
+        end else if (!stall_i) begin
             done_shift <= {done_shift[2:0], start_i};
         end
     end

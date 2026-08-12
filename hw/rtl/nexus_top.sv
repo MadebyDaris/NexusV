@@ -181,6 +181,7 @@ module nexus_top (
     nexus_mux u_mux (
         .clk_i    (clk_i),
         .rst_ni   (rst_ni),
+        .stall_i  (1'b0),   // no stalling in this PoC
         .start_i  (shell_start),
         .funct3_i (shell_funct3),
         .rs1_i    (shell_rs1),

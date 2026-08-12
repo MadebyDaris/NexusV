@@ -4,17 +4,16 @@ module nexus_skid_buffer #(
 ) (
     input  logic                     clk_i,
     input  logic                     rst_ni,
-    input  logic                     stall_i,
 
-    // Slave interface Upstream
-    input logic s_valid,
-    output logic s_ready,
-    input logic [DATA_WIDTH-1:0] s_data,
+    // Slave interface (upstream)
+    input  logic                     s_valid,
+    output logic                     s_ready,
+    input  logic [DATA_WIDTH-1:0]    s_data,
 
-    // Master interface Downstream
-    output logic m_valid,
-    input logic m_ready,
-    output logic [DATA_WIDTH-1:0] m_data
+    // Master interface (downstream)
+    output logic                     m_valid,
+    input  logic                     m_ready,
+    output logic [DATA_WIDTH-1:0]    m_data
 );
 
     logic [DATA_WIDTH-1:0] buffer [BUFFER_DEPTH-1:0];
@@ -22,12 +21,13 @@ module nexus_skid_buffer #(
     logic [$clog2(BUFFER_DEPTH):0] count;
 
     assign m_valid = (count > 0);
-    assign m_data = buffer[head];
+    assign m_data  = buffer[head];
+    assign s_ready = (count < BUFFER_DEPTH);
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            head <= 0;
-            tail <= 0;
+            head  <= 0;
+            tail  <= 0;
             count <= 0;
         end else begin
             if (s_valid && s_ready) begin
@@ -46,7 +46,5 @@ module nexus_skid_buffer #(
             endcase
         end
     end
-
-    assign s_ready = (count < BUFFER_DEPTH);
 
 endmodule

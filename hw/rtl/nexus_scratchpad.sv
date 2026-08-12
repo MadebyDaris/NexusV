@@ -1,29 +1,29 @@
 module nexus_scratchpad #(
-    parameter int WORDS = 256,
+    parameter int WORDS      = 256,
     parameter int DATA_WIDTH = 32,
     parameter int ADDR_WIDTH = $clog2(WORDS)
-)(
-    input logic clk_i,
-    input logic rst_ni,
-    input logic stall_i,
+) (
+    input  logic                     clk_i,
+    input  logic                     rst_ni,
 
-    // A for read and write on scratchpad
-    input  logic [ADDR_WIDTH-1:0] a_addr_i,
-    input  logic a_we_i,
-    input  logic [DATA_WIDTH-1:0] a_wdata_i,
-    output logic [DATA_WIDTH-1:0] a_rdata_o,
+    // Port A — read/write
+    input  logic [ADDR_WIDTH-1:0]    a_addr_i,
+    input  logic                     a_we_i,
+    input  logic [DATA_WIDTH-1:0]    a_wdata_i,
+    output logic [DATA_WIDTH-1:0]    a_rdata_o,
 
-    // B for read only on scratchpad
-    input  logic [ADDR_WIDTH-1:0] b_addr_i,
-    output logic [DATA_WIDTH-1:0] b_rdata_o
-)
+    // Port B — read only
+    input  logic [ADDR_WIDTH-1:0]    b_addr_i,
+    output logic [DATA_WIDTH-1:0]    b_rdata_o
+);
+
     logic [DATA_WIDTH-1:0] mem [0:WORDS-1];
 
+    // Port A: read + write
     always_ff @(posedge clk_i or negedge rst_ni) begin
-        if (~rst_ni) begin
+        if (!rst_ni) begin
             a_rdata_o <= '0;
-            b_rdata_o <= '0;
-        end else if (~stall_i) begin
+        end else begin
             if (a_we_i) begin
                 mem[a_addr_i] <= a_wdata_i;
             end
@@ -31,12 +31,13 @@ module nexus_scratchpad #(
         end
     end
 
-// B for read only on scratchpad
+    // Port B: read only
     always_ff @(posedge clk_i or negedge rst_ni) begin
-        if (~rst_ni) begin
+        if (!rst_ni) begin
             b_rdata_o <= '0;
-        end else if (~stall_i) begin
+        end else begin
             b_rdata_o <= mem[b_addr_i];
         end
     end
+
 endmodule

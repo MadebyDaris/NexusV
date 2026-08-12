@@ -13,11 +13,7 @@ Graph: mac_plus_5  =>  (rs1 * rs2) + 5
 Expected latency: 4 (MUL takes 2 cycles)
 """
 
-include("../src/Core/DFG_Builder.jl")
-using .DFG_Builder
-
-include("../hw/src_hw/Scheduler.jl")   # plain include, uses DFG_Builder types in scope
-include("../hw/src_hw/VerilogEmitter.jl")
+using NexusV
 
 # Build — latency 0 means "use OP_LATENCY default"
 node_1 = DFGNode(1, OP_ARG,   32, [],    nothing, 0, 0, nothing, Dict())
@@ -65,7 +61,6 @@ sv_text = read(out_sv, String)
 @assert occursin("rd_o", sv_text) "Missing rd_o"
 @assert occursin("always_ff", sv_text) "Missing pipeline registers"
 @assert occursin("endmodule", sv_text) "Missing endmodule"
-# Multi-cycle: MUL (node 4) should have 2 pipeline registers (r2, r3)
 @assert occursin("n4_r2", sv_text) "Missing n4_r2 pipeline register"
 @assert occursin("n4_r3", sv_text) "Missing n4_r3 pipeline register (multi-cycle MUL)"
 println("Emit: PASS  (written to $out_sv)")

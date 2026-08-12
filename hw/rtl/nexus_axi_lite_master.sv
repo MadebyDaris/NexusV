@@ -54,9 +54,8 @@ module nexus_axi_lite_master #(
         .DATA_WIDTH(1 + ADDR_WIDTH + DATA_WIDTH),
         .BUFFER_DEPTH(2)
     ) req_skid (
-        .clk_i   (aclk_i),
+        .clk_i   (clk_i),
         .rst_ni  (rst_ni),
-        .stall_i (1'b0),
         .s_valid (req_valid_i),
         .s_ready (req_ready_o),
         .s_data  ({req_we_i, req_addr_i, req_wdata_i}),
@@ -72,7 +71,7 @@ module nexus_axi_lite_master #(
         .DATA_WIDTH(DATA_WIDTH),
         .BUFFER_DEPTH(2)
     ) resp_skid (
-        .clk_i   (aclk_i),
+        .clk_i   (clk_i),
         .rst_ni  (rst_ni),
         .stall_i (1'b0),
         .s_valid (skid_resp_valid),
@@ -99,7 +98,7 @@ module nexus_axi_lite_master #(
     assign axi_wdata_o  = skid_req_wdata;
     assign axi_araddr_o = skid_req_addr;
 
-    always_ff @(posedge aclk_i or negedge rst_ni) begin
+    always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
             state   <= IDLE;
             aw_done <= 1'b0;

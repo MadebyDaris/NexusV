@@ -1,8 +1,6 @@
 using Test
 using MacroTools
-
-# Include your source file (adjust path as needed)
-include("../src/Core/NexusV_macro.jl")
+using NexusV
 
 # 1. Define test functions at the global file scope
 @nexus_accelerate function mac_elemental(a::Int8, b::Int8)

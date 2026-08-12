@@ -1,6 +1,4 @@
-include("../src/Core/DFG_Builder.jl")
-
-using .DFG_Builder
+using NexusV
 
 # Graph: mac_plus_5  =>  (rs1 * rs2) + 5
 
