@@ -1,7 +1,10 @@
 # Scheduler.jl
 # Depends on DFG_Builder types being available in the caller's scope.
+# Includes single-producer ALU muxing and list scheduling with resource constraints.
 
-export schedule_asap!, topological_sort, finish_cycle, schedule_alap!, resource_requirements, resource_usage_timeline
+using DataStructures: PriorityQueue
+
+export schedule_asap!, topological_sort, finish_cycle, schedule_alap!, resource_requirements, resource_usage_timeline, schedule_list!, mux_alu_pathways!
 
 is_primitive_node(node) = hasproperty(node, :primitive) && node.primitive !== nothing
 
@@ -67,25 +70,27 @@ end
 #              (or overridden per-node).
 #
 # Graph total latency = max finish_cycle among compute nodes (excl. OP_RET).
-function schedule_asap!(graph::HWGraph)
-    for id in topological_sort(graph)
-        node = graph.nodes[id]
-
-        # Set default latency from the opcode table if not already assigned
-        if node.latency == 0 && node.op ∉ (OP_ARG, OP_CONST, OP_RET, OP_PRIMITIVE)
-            node.latency = OP_LATENCY[node.op]
+function schedule_asap!(graph::HWGraph; resources=Dict())
+    # First: assign latencies where unspecified
+    for node in values(graph.nodes)
+        if node.latency == 0 && !(node.op == OP_ARG || node.op == OP_CONST || node.op == OP_RET || is_primitive_node(node))
+            node.latency = opcode_latency(node.op)
         end
-
-        if node.op == OP_PRIMITIVE
-            if @isdefined(PRIMITIVES)
-                node.latency = PRIMITIVES[node.primitive].latency
+        # get the latency of primitive nodes from the primitive library
+        if is_primitive_node(node)
+            if isdefined(Main, :PrimitiveLibrary)
+                node.latency = primitive_latency(node)
             else
                 error("OP_PRIMITIVE node $(node.id) requires PrimitiveLibrary to be loaded")
             end
-        elseif node.latency == 0 && node.op ∉ (OP_ARG, OP_CONST, OP_RET)
-            node.latency = OP_LATENCY[node.op]
+        elseif node.latency == 0 && !(node.op == OP_ARG || node.op == OP_CONST || node.op == OP_RET)
+            node.latency = opcode_latency(node.op)
         end
+    end
 
+    # Quick unconstrained ASAP to get a baseline latency and earliest starts
+    for id in topological_sort(graph)
+        node = graph.nodes[id]
         if isempty(node.inputs) || node.op == OP_ARG || node.op == OP_CONST
             node.scheduled_cycle = 1
         elseif node.op == OP_RET
@@ -97,15 +102,195 @@ function schedule_asap!(graph::HWGraph)
         end
     end
 
-    # Graph latency = max finish_cycle among real compute nodes
-    compute_nodes = [n for n in values(graph.nodes)
-                     if n.op ∉ (OP_ARG, OP_CONST, OP_RET)]
+    # Baseline graph latency (may increase under resource constraints)
+    compute_nodes = [n for n in values(graph.nodes) if n.latency > 0]
+    graph.latency = isempty(compute_nodes) ? 1 : maximum(finish_cycle(n) for n in compute_nodes)
+
+    # Compute ALAP and slack based on baseline schedule
+    latest_start, slack = schedule_alap!(graph)
+
+    # Prepare for list scheduling: reset scheduled cycles for non-trivial nodes
+    for node in values(graph.nodes)
+        if node.op ∉ (OP_ARG, OP_CONST)
+            node.scheduled_cycle = 0
+        else
+            node.scheduled_cycle = 1
+        end
+    end
+
+    # Resource timeline per opcode: map cycle -> usage count
+    resource_timeline = Dict{Any,Dict{Int,Int}}()
+    # Helper to get budget for an opcode (keys are kept as-given)
+    function budget_for(op)
+        get(resources, op, typemax(Int))
+    end
+
+    unscheduled = Set([id for id in keys(graph.nodes) if graph.nodes[id].latency > 0])
+    cycle = 1
+
+    # Continue until all compute nodes scheduled
+    while !isempty(unscheduled)
+        # Build ready list: nodes whose inputs are scheduled and earliest_start <= cycle
+        ready = Int[]
+        for id in collect(unscheduled)
+            node = graph.nodes[id]
+            deps_scheduled = all(graph.nodes[d].scheduled_cycle != 0 for d in node.inputs)
+            if deps_scheduled
+                # earliest dynamic start based on actual deps
+                earliest = isempty(node.inputs) ? 1 : maximum(finish_cycle(graph.nodes[d]) for d in node.inputs) + 1
+                if earliest <= cycle
+                    push!(ready, id)
+                end
+            end
+        end
+
+        # Group ready nodes by opcode and sort by least slack first
+        scheduled_this_cycle = false
+        by_op = Dict{Any,Vector{Int}}()
+        for id in ready
+            key = resource_key(graph.nodes[id])
+            push!(get!(by_op, key, Int[]), id)
+        end
+
+        for (key, ids) in by_op
+            # sort by slack (least slack first) then by earlier baseline ASAP then id
+            sort!(ids, by=x -> (slack[x], graph.nodes[x].scheduled_cycle == 0 ? typemax(Int) : graph.nodes[x].scheduled_cycle, x))
+            b = budget_for(key)
+            # ensure timeline map exists
+            timeline = get!(resource_timeline, key, Dict{Int,Int}())
+
+            for id in ids
+                node = graph.nodes[id]
+                lat = max(1, node.latency)
+                # check availability across the node's occupied cycles
+                can_place = true
+                for c in cycle:(cycle+lat-1)
+                    used = get(timeline, c, 0)
+                    if used >= b
+                        can_place = false
+                        break
+                    end
+                end
+                if can_place
+                    # reserve resources
+                    for c in cycle:(cycle+lat-1)
+                        timeline[c] = get(timeline, c, 0) + 1
+                    end
+                    node.scheduled_cycle = cycle
+                    delete!(unscheduled, id)
+                    scheduled_this_cycle = true
+                end
+            end
+        end
+
+        # If nothing could be scheduled this cycle (resource contention), advance cycle
+        if !scheduled_this_cycle
+            cycle += 1
+        end
+    end
+
+    # Recompute graph latency after resource-constrained scheduling
+    compute_nodes = [n for n in values(graph.nodes) if n.latency > 0]
     graph.latency = isempty(compute_nodes) ? 1 : maximum(finish_cycle(n) for n in compute_nodes)
 
     return graph
 end
 
-function schedule_alap!(graph::HWGraph)
-    in_degree = Dict(id => 0 for id in keys(graph.nodes))
+"""
+    resource_usage_timeline(graph)
 
+Return a per-cycle breakdown of active resource usage after scheduling.
+
+The result is `Dict{Int, Dict{Any,Int}}` mapping each cycle to the number of
+active nodes per opcode during that cycle.
+"""
+function resource_usage_timeline(graph::HWGraph)
+    timeline = Dict{Int,Dict{Any,Int}}()
+
+    for node in values(graph.nodes)
+        if node.latency <= 0
+            continue
+        end
+
+        for cycle in node.scheduled_cycle:finish_cycle(node)
+            usage = get!(timeline, cycle, Dict{Any,Int}())
+            key = resource_key(node)
+            usage[key] = get(usage, key, 0) + 1
+        end
+    end
+
+    return timeline
+end
+
+"""
+    resource_requirements(graph)
+
+Return the peak concurrent usage required per opcode after scheduling.
+This is useful for deriving a resource budget such as
+`Dict(OP_MUL => 2, OP_ADD => 1)` before muxing shared units.
+"""
+function resource_requirements(graph::HWGraph)
+    peak = Dict{Any,Int}()
+    for usage in values(resource_usage_timeline(graph))
+        for (op, count) in usage
+            peak[op] = max(get(peak, op, 0), count)
+        end
+    end
+    return peak
+end
+
+function schedule_alap!(graph::HWGraph)
+    # Ensure graph latency and per-node latencies/scheduled_cycle are available
+    if graph.latency == 0
+        schedule_asap!(graph)
+    end
+
+    # Build consumer lists: for each node, which nodes use it as input
+    consumers = Dict(id => Int[] for id in keys(graph.nodes))
+    for (id, node) in graph.nodes
+        for inp in node.inputs
+            push!(consumers[inp], id)
+        end
+    end
+
+    # We'll walk nodes in reverse topological order so consumers are processed
+    # before their dependencies.
+    rev_order = reverse(topological_sort(graph))
+
+    # latest_start hold the latest cycle a node may start while still
+    # meeting the overall graph latency. Initialize conservatively to
+    # the graph latency for every node.
+    latest_start = Dict{Int,Int}(id => graph.latency for id in keys(graph.nodes))
+
+    for id in rev_order
+        node = graph.nodes[id]
+
+        if isempty(consumers[id])
+            # No consumers: value must be ready by the graph latency
+            latest_start[id] = graph.latency
+        else
+            # For each consumer c, the dependency must finish by
+            # latest_start[c] - 1. Thus the latest start for this node
+            # is min_c ( latest_start[c] - node.latency ).
+            candidate = typemax(Int)
+            for c in consumers[id]
+                v = latest_start[c] - node.latency
+                if v < candidate
+                    candidate = v
+                end
+            end
+            # Ensure at least cycle 1
+            latest_start[id] = max(1, candidate)
+        end
+    end
+
+    # Compute slack = latest_start - earliest_start (earliest stored
+    # previously in node.scheduled_cycle by schedule_asap!). Return both
+    # mappings so callers can inspect or use them.
+    slack = Dict{Int,Int}()
+    for (id, node) in graph.nodes
+        slack[id] = latest_start[id] - node.scheduled_cycle
+    end
+
+    return latest_start, slack
 end
