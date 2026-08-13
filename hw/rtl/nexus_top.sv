@@ -35,7 +35,7 @@ module nexus_top (
     // ──────────────────────────────────────────────────────────────────────
     if_xif #() ext_if ();
 
-    wire boot_select_w = 1'b0;   // 0 = JTAG/Testbench, 1 = SPI Flash
+    wire boot_select_w = 1'b0;   // 0 = JTAG/Testbench (debug path), 1 = SPI Flash
     
     // Power management loopback with 15-cycle delay
     localparam SWITCH_ACK_LATENCY = 15;

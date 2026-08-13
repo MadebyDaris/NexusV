@@ -66,7 +66,7 @@ verilator \
     -Wno-UNDRIVEN -Wno-LITENDIAN -Wno-IMPLICIT \
     -Wno-IMPORTSTAR -Wno-VARHIDDEN -Wno-EOFNEWLINE \
     -Wno-ASSIGNIN -Wno-PINMISSING -Wno-UNOPTFLAT -Wno-DECLFILENAME \
-    -Wno-UNSIGNED -Wno-LATCH \
+    -Wno-UNSIGNED -Wno-LATCH -Wno-SYNCASYNCNET -Wno-MULTIDRIVEN \
     --language 1800-2012 \
     -f "$VC_OUT" \
     "$RTL/mac_plus_5.sv" \

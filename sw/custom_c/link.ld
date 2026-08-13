@@ -2,7 +2,7 @@ OUTPUT_ARCH(riscv)
 ENTRY(_start)
 
 MEMORY {
-    ram (rwx) : ORIGIN = 0x00000000, LENGTH = 0x8000 /* 32 KB */
+    ram (rwx) : ORIGIN = 0x00000000, LENGTH = 0x8000 /* Boot address default is 0x180 */
 }
 
 SECTIONS {
