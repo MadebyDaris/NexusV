@@ -238,15 +238,9 @@ module nexus_top (
     assign ext_if.compressed_ready = 1'b1;
     assign ext_if.compressed_resp  = '0;
 
-    // Memory channel — not used. Coprocessor drives mem_valid/mem_req = 0,
-    // but MUST also drive mem_ready and mem_resp so the CPU's X-IF wrapper
-    // doesn't see undriven (X) signals. Reject with exception if ever asserted.
+    // Memory channel — not used
     assign ext_if.mem_valid = 1'b0;
     assign ext_if.mem_req   = '0;
-    assign ext_if.mem_ready = 1'b1;
-    assign ext_if.mem_resp.exc     = 1'b1;   // reject any memory request
-    assign ext_if.mem_resp.exccode = 6'h02;  // illegal instruction
-    assign ext_if.mem_resp.dbg     = 1'b0;
 
 
 endmodule

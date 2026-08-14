@@ -101,7 +101,14 @@ module cvxif_nexus_shell (
           // Accept only CUSTOM_0 instructions (opcode == 0x0B)
           if (x_issue_req_instr_i[6:0] == 7'h0B) begin
             x_issue_resp_accept_o = 1'b1;
-            state_n = WAIT_COMMIT;
+            // The cv32e40px can commit in the SAME cycle as issue.
+            // Handle that here to avoid missing the commit.
+            if (x_commit_valid_i && !x_commit_kill_i) begin
+              dp_start_o = 1'b1;
+              state_n    = WAIT_DATAPATH;
+            end else begin
+              state_n = WAIT_COMMIT;
+            end
           end else begin
             x_issue_resp_accept_o = 1'b0;
           end
@@ -109,7 +116,11 @@ module cvxif_nexus_shell (
       end
 
       WAIT_COMMIT: begin
-        if (x_commit_valid_i && (x_commit_id_i == saved_id_q)) begin
+        // In-order coprocessor: process commit without ID matching.
+        // The cv32e40px may issue multiple instructions before committing,
+        // so a strict ID comparison can deadlock. We handle one instruction
+        // at a time, so commit order == issue order.
+        if (x_commit_valid_i) begin
           if (x_commit_kill_i) state_n = IDLE;  // Branch mispredict — flush
           else begin
             dp_start_o = 1'b1;  // Kick off the datapath
