@@ -15,7 +15,11 @@ module nexus_mux (
     input  logic [31:0] rs1_i,
     input  logic [31:0] rs2_i,
     output logic [31:0] rd_o,
-    output logic        done_o
+    output logic        done_o,
+    output logic [31:0] sp_addr_o,
+    output logic [31:0] sp_wdata_o,
+    output logic        sp_we_o,
+    input  logic [31:0] sp_rdata_i
 );
 
   // Stateful configuration registers (latched via commands)
@@ -69,7 +73,7 @@ module nexus_mux (
       selected_q <= '0;
       inflight_q <= 1'b0;
     end else begin
-      if (start_i && !inflight_q) begin
+      if (start_i && (!inflight_q || done_o)) begin
         selected_q <= funct3_i;
         inflight_q <= 1'b1;
       end else if (done_o) begin
@@ -79,11 +83,11 @@ module nexus_mux (
   end
 
   // Stateless start routing — one-hot based on funct3 >= 3
-  assign start_3 = start_i && (funct3_i == 3'd3) && !inflight_q;
-  assign start_4 = start_i && (funct3_i == 3'd4) && !inflight_q;
-  assign start_5 = start_i && (funct3_i == 3'd5) && !inflight_q;
-  assign start_6 = start_i && (funct3_i == 3'd6) && !inflight_q;
-  assign start_7 = start_i && (funct3_i == 3'd7) && !inflight_q;
+  assign start_3 = start_i && (funct3_i == 3'd3) && (!inflight_q || done_o);
+  assign start_4 = start_i && (funct3_i == 3'd4) && (!inflight_q || done_o);
+  assign start_5 = start_i && (funct3_i == 3'd5) && (!inflight_q || done_o);
+  assign start_6 = start_i && (funct3_i == 3'd6) && (!inflight_q || done_o);
+  assign start_7 = start_i && (funct3_i == 3'd7) && (!inflight_q || done_o);
 
   // Stateful datapath — commands routed via funct3 0-2
   nexus_mont_adapter u_stateful (
@@ -97,7 +101,11 @@ module nexus_mux (
       .wdata_i(stateful_wdata_q),
       .we_i   (stateful_we),
       .rd_o   (stateful_rd),
-      .done_o (stateful_done)
+      .done_o (stateful_done),
+      .sp_addr_o(sp_addr_o),
+      .sp_wdata_o(sp_wdata_o),
+      .sp_we_o(sp_we_o),
+      .sp_rdata_i(sp_rdata_i)
   );
 
   // Stateless datapath instantiations

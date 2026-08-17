@@ -201,6 +201,7 @@ module nexus_top (
   );
 
   // Scratchpad Port B signals (wire between datapath and scratchpad)
+  localparam int SP_WORDS = 256;
   logic [$clog2(SP_WORDS)-1:0] sp_portB_addr;
   logic                        sp_portB_we;
   logic [                31:0] sp_portB_wdata;

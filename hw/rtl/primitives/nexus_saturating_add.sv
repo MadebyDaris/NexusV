@@ -34,9 +34,6 @@ module nexus_saturating_add #(
     logic                 overflow [LANES-1:0];
     logic                 underflow [LANES-1:0];
 
-    logic signed [DATA_WIDTH:0] sum_ext_r [LANES-1:0];
-    logic                 overflow_r [LANES-1:0];
-    logic                 underflow_r [LANES-1:0];
 
     genvar i;
     generate
@@ -45,9 +42,9 @@ module nexus_saturating_add #(
             assign a = $signed(rs1_i[i*DATA_WIDTH +: DATA_WIDTH]);
             assign b = $signed(rs2_i[i*DATA_WIDTH +: DATA_WIDTH]);
 
-            assign sum_ext[i]  = a + b;
-            assign overflow[i]  = (a > 0) && (b > 0) && (sum_ext[i][DATA_WIDTH-1:0] < 0);
-            assign underflow[i] = (a < 0) && (b < 0) && (sum_ext[i][DATA_WIDTH-1:0] > 0);
+            assign sum_ext[i]   = a + b;
+            assign overflow[i]  = (a > 0) && (b > 0) && (sum_ext[i][DATA_WIDTH-1] == 1'b1);
+            assign underflow[i] = (a < 0) && (b < 0) && (sum_ext[i][DATA_WIDTH-1] == 1'b0);
         end
     endgenerate
 
@@ -56,12 +53,12 @@ module nexus_saturating_add #(
 
     always_comb begin
         for (int j = 0; j < LANES; j++) begin
-            if (overflow_r[j])
+            if (overflow[j])
                 rd_comb[j*DATA_WIDTH +: DATA_WIDTH] = MAX_VAL;
-            else if (underflow_r[j])
+            else if (underflow[j])
                 rd_comb[j*DATA_WIDTH +: DATA_WIDTH] = MIN_VAL;
             else
-                rd_comb[j*DATA_WIDTH +: DATA_WIDTH] = sum_ext_r[j][DATA_WIDTH-1:0];
+                rd_comb[j*DATA_WIDTH +: DATA_WIDTH] = sum_ext[j][DATA_WIDTH-1:0];
         end
     end
 
@@ -78,15 +75,5 @@ module nexus_saturating_add #(
         end
     end
 
-    // ── Pipeline registers ────────────────────────────────────────────────
-    always_ff @(posedge clk_i) begin
-        if (!stall_i) begin
-            for (int k = 0; k < LANES; k++) begin
-                sum_ext_r[k]  <= sum_ext[k];
-                overflow_r[k]  <= overflow[k];
-                underflow_r[k] <= underflow[k];
-            end
-        end
-    end
-
+    // Removed unused pipeline registers since this is a 1-cycle latency datapath
 endmodule

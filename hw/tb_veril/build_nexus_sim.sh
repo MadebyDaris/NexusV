@@ -77,6 +77,7 @@ verilator \
     "$RTL/primitives/nexus_mont_multiplier.sv" \
     "$RTL/primitives/nexus_mont_adapter.sv" \
     "$RTL/nexus_mux.sv" \
+    "$RTL/nexus_scratchpad.sv" \
     "$RTL/cvxif_nexus_shell.sv" \
     "$RTL/nexus_top.sv" \
     "$TB/tb_nexus_system.sv" \

@@ -74,9 +74,9 @@ module cvxif_nexus_shell (
   // Datapath operand routing
   // --------------------------------------------------------------------------
   assign dp_stall_o  = stall_i;
-  assign dp_rs1_o    = saved_rs1_q;
-  assign dp_rs2_o    = saved_rs2_q;
-  assign dp_funct3_o = saved_instr_q[14:12];  // funct3 field from RISC-V instruction
+  assign dp_rs1_o    = (state_q == IDLE) ? x_issue_req_rs1_i : saved_rs1_q;
+  assign dp_rs2_o    = (state_q == IDLE) ? x_issue_req_rs2_i : saved_rs2_q;
+  assign dp_funct3_o = (state_q == IDLE) ? x_issue_req_instr_i[14:12] : saved_instr_q[14:12];
   // --------------------------------------------------------------------------
   // Combinational FSM
   // --------------------------------------------------------------------------

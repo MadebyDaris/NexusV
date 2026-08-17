@@ -32,8 +32,16 @@ module nexus_mont_adapter #(
     input  logic                     we_i,
     // Outputs
     output logic [WORD_WIDTH-1:0]    rd_o,
-    output logic                     done_o
+    output logic                     done_o,
+    // Dummy Scratchpad Port B (unused in this adapter since we use local mem)
+    output logic [31:0]              sp_addr_o,
+    output logic [31:0]              sp_wdata_o,
+    output logic                     sp_we_o,
+    input  logic [31:0]              sp_rdata_i
 );
+    assign sp_addr_o  = '0;
+    assign sp_wdata_o = '0;
+    assign sp_we_o    = 1'b0;
 
     // ── Local register files ─────────────────────────────────────────────────
     logic [WORD_WIDTH-1:0] mem_A [NUM_WORDS-1:0];

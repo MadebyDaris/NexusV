@@ -11,7 +11,7 @@
 //   Stage 2: reduction sum
 //   Stage 3: accumulate + output
 //
-// Interface: canonical Nexus datapath (clk_i, rst_ni, start_i, rs1_i, rs2_i, rd_o, done_o)
+// done_o asserts 3 cycles after start_i (result valid same cycle as done_o).
 
 module nexus_simd_mac #(
     parameter int LANES      = 4,
@@ -54,29 +54,30 @@ module nexus_simd_mac #(
     /* verilator lint_on WIDTHEXPAND */
 
     logic signed [ACC_WIDTH-1:0] acc_q;
+    logic [2:0]                  done_shift;
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            acc_q  <= '0;
-            rd_o   <= '0;
-            done_o <= 1'b0;
+            acc_q      <= '0;
+            rd_o       <= '0;
+            done_shift <= '0;
         end else if (!stall_i) begin
-            done_o <= 1'b0;
-            if (start_i) begin
-                acc_q  <= acc_q + sum_r;
-                rd_o   <= acc_q + sum_r;
-                done_o <= 1'b1;
-            end
-        end
-    end
-
-    always_ff @(posedge clk_i) begin
-        if (!stall_i) begin
+            // Stage 1 → Stage 2
             for (int k = 0; k < LANES; k++) begin
                 prod_r[k] <= prod[k];
             end
             sum_r <= sum_comb;
+
+            // Stage 3: accumulate + output (sum_r valid 2 cycles after start)
+            if (done_shift[1]) begin
+                acc_q <= acc_q + sum_r;
+                rd_o  <= acc_q + sum_r;
+            end
+
+            done_shift <= {done_shift[1:0], start_i};
         end
     end
+
+    assign done_o = done_shift[2];
 
 endmodule

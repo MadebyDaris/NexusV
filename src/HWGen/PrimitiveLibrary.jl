@@ -1,5 +1,5 @@
 # PrimitiveLibrary.jl
-# Included directly into NexusV module — no submodule wrapper.
+# Included directly into NexusV module - no submodule wrapper.
 
 export PrimitiveSpec, PRIMITIVES, register_primitive!
 
@@ -28,7 +28,7 @@ function register_primitive!(spec::PrimitiveSpec)
     println("[PrimitiveLibrary] Registered :$(spec.name) → $(spec.module_name) (latency=$(spec.latency)) $tag")
 end
 
-# ── Built-in primitives ───────────────────────────────────────────────────────
+# Built-in primitives
 
 register_primitive!(PrimitiveSpec(
     :simd_mac,
@@ -43,7 +43,7 @@ register_primitive!(PrimitiveSpec(
     "nexus_barrett_reduction",
     "primitives/nexus_barrett_reduction.sv",
     3, false,
-    Dict(:WORD_WIDTH => 32, :MODULUS => 12289, :K => 14)
+    Dict(:WORD_WIDTH => 32, :MODULUS => 12289, :K => 349496)
 ))
 
 register_primitive!(PrimitiveSpec(

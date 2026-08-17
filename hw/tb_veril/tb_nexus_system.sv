@@ -47,7 +47,10 @@ module tb_nexus_system (
         end else begin
             core_instr_rsp.gnt    <= core_instr_req.req;
             core_instr_rsp.rvalid <= core_instr_req.req;
-            if (core_instr_req.req) core_instr_rsp.rdata <= '0;
+            if (core_instr_req.req) begin
+                core_instr_rsp.rdata <= '0;
+                $display("[TB] IF: addr=%h", core_instr_req.addr);
+            end
         end
     end
 
