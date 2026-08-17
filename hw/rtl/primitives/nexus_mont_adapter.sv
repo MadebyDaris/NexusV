@@ -1,12 +1,16 @@
-// nexus_mont_adapter — wraps nexus_montgomery_multiplier into the canonical
-// Nexus datapath interface so it can sit behind nexus_mux.
+// nexus_mont_adapter — stateful wrapper for nexus_montgomery_multiplier
 //
-// The native Montgomery module uses multi-port memory interfaces (addr_A, data_A,
-// addr_B, data_B, etc.) for multi-word operands. This adapter provides local
-// 4-word register files for A, B, N, and T, and maps rs1_i/rs2_i into the
-// first word of A/B.
+// The native Montgomery module uses multi-port memory interfaces. This adapter
+// provides local register files and a stateful control interface:
 //
-// Interface: clk_i, rst_ni, stall_i, start_i, rs1_i, rs2_i, rd_o, done_o
+// Stateful ports (set via funct3 commands before CMD_START):
+//   addr_i   — {bank[31:16], word[15:0]}:  bank=0→A, 1→B, 2→N
+//   wdata_i  — data word to write
+//   we_i     — write strobe (pulsed)
+//
+// Standard compute (triggered by start_i after config):
+//   start_i → runs Montgomery compute → result in rd_o + done_o
+//   Legacy mode: start_i also loads rs1_i→A[0], rs2_i→B[0] (simple operands)
 
 module nexus_mont_adapter #(
     parameter int WORD_WIDTH = 32,
@@ -18,9 +22,15 @@ module nexus_mont_adapter #(
     input  logic                     clk_i,
     input  logic                     rst_ni,
     input  logic                     stall_i,
+    // Standard Nexus
     input  logic                     start_i,
     input  logic [WORD_WIDTH-1:0]    rs1_i,
     input  logic [WORD_WIDTH-1:0]    rs2_i,
+    // Stateful control
+    input  logic [WORD_WIDTH-1:0]    addr_i,
+    input  logic [WORD_WIDTH-1:0]    wdata_i,
+    input  logic                     we_i,
+    // Outputs
     output logic [WORD_WIDTH-1:0]    rd_o,
     output logic                     done_o
 );
@@ -29,7 +39,7 @@ module nexus_mont_adapter #(
     logic [WORD_WIDTH-1:0] mem_A [NUM_WORDS-1:0];
     logic [WORD_WIDTH-1:0] mem_B [NUM_WORDS-1:0];
     logic [WORD_WIDTH-1:0] mem_N [NUM_WORDS-1:0];
-    logic [WORD_WIDTH-1:0] mem_T [NUM_WORDS:0];  // extra word for carries
+    logic [WORD_WIDTH-1:0] mem_T [NUM_WORDS:0];
 
     // ── Montgomery interface wires ───────────────────────────────────────────
     logic [$clog2(NUM_WORDS)-1:0]    mont_addr_A;
@@ -45,7 +55,11 @@ module nexus_mont_adapter #(
     logic                            mont_start;
     logic                            mont_done;
 
-    // ── Load operands on start + Montgomery write port ──────────────────────
+    // ── Decode stateful address ──────────────────────────────────────────────
+    wire [15:0] s_bank   = addr_i[31:16];
+    wire [15:0] s_word   = addr_i[$clog2(NUM_WORDS)-1:0];
+
+    // ── Combined write/load logic ────────────────────────────────────────────
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
             for (int i = 0; i < NUM_WORDS; i++) begin
@@ -57,18 +71,21 @@ module nexus_mont_adapter #(
                 mem_T[i] <= '0;
             end
         end else if (!stall_i) begin
+            // Stateful write (CMD_WRITE_DATA)
+            if (we_i && s_bank == 16'd0 && s_word < NUM_WORDS)
+                mem_A[s_word] <= wdata_i;
+            if (we_i && s_bank == 16'd1 && s_word < NUM_WORDS)
+                mem_B[s_word] <= wdata_i;
+            if (we_i && s_bank == 16'd2 && s_word < NUM_WORDS)
+                mem_N[s_word] <= wdata_i;
+
+            // Legacy mode: on start, load rs1→A[0], rs2→B[0]
             if (start_i) begin
                 mem_A[0] <= rs1_i;
                 mem_B[0] <= rs2_i;
-                for (int i = 1; i < NUM_WORDS; i++) begin
-                    mem_A[i] <= '0;
-                    mem_B[i] <= '0;
-                end
-                mem_N[0] <= WORD_WIDTH'(N);
-                for (int i = 1; i < NUM_WORDS; i++) begin
-                    mem_N[i] <= '0;
-                end
             end
+
+            // Montgomery write-back
             if (mont_we_T) begin
                 mem_T[mont_addr_T] <= mont_write_T;
             end

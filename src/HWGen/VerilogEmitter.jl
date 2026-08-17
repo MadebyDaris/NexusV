@@ -11,13 +11,19 @@ function op_to_sv(op::Opcode)::String
     op == OP_SHR && return ">>"
     op == OP_SHL && return "<<"
     op == OP_AND && return "&"
-    op == OP_OR  && return "|"
+    op == OP_OR && return "|"
     op == OP_XOR && return "^"
     op == OP_MOD && return "%"
+    op == OP_EQ && return "=="
+    op == OP_NEQ && return "!="
+    op == OP_LT && return "<"
+    op == OP_LE && return "<="
+    op == OP_GT && return ">"
+    op == OP_GE && return ">="
     error("No SV operator for opcode: $op")
 end
 
-comb_wire(id::Int)        = "n$(id)_comb"
+comb_wire(id::Int) = "n$(id)_comb"
 reg_wire(id::Int, c::Int) = "n$(id)_r$(c)"
 
 # Emit a pipelined SystemVerilog module from a scheduled HWGraph.
@@ -29,10 +35,10 @@ reg_wire(id::Int, c::Int) = "n$(id)_r$(c)"
 # Multi-cycle ops are supported via pipeline register chains that span
 # from scheduled_cycle through finish_cycle.
 function emit_verilog(graph::HWGraph, filepath::String)
-    W         = 32
-    arg_ids   = graph.graph_inputs
-    ret_node  = graph.nodes[graph.graph_outputs[1]]
-    out_id    = ret_node.inputs[1]
+    W = 32
+    arg_ids = graph.graph_inputs
+    ret_node = graph.nodes[graph.graph_outputs[1]]
+    out_id = ret_node.inputs[1]
     max_cycle = graph.latency
 
     # Group compute nodes by their scheduled (start) cycle
@@ -118,18 +124,31 @@ function emit_verilog(graph::HWGraph, filepath::String)
     push!(lines, "    // Combinational logic")
     for cyc in 1:max_cycle
         for id in by_cycle[cyc]
-            node  = graph.nodes[id]
-            lhs   = comb_wire(id)
+            node = graph.nodes[id]
+            lhs = comb_wire(id)
             if node.op == OP_MUX
                 rhs_cond = resolve(node.inputs[1], cyc)
                 rhs_true = resolve(node.inputs[2], cyc)
                 rhs_false = resolve(node.inputs[3], cyc)
                 push!(lines, "    assign $lhs = |$rhs_cond ? $rhs_true : $rhs_false;")
             else
-                sv_op = op_to_sv(node.op)
                 rhs_a = resolve(node.inputs[1], cyc)
                 rhs_b = resolve(node.inputs[2], cyc)
-                push!(lines, "    assign $lhs = $rhs_a $sv_op $rhs_b;")
+                if node.op == OP_LT
+                    push!(lines, "    assign $lhs = {$(W-1)'b0, \\$signed($rhs_a) < \\$signed($rhs_b)};")
+                elseif node.op == OP_LE
+                    push!(lines, "    assign $lhs = {$(W-1)'b0, \\$signed($rhs_a) <= \\$signed($rhs_b)};")
+                elseif node.op == OP_GT
+                    push!(lines, "    assign $lhs = {$(W-1)'b0, \\$signed($rhs_a) > \\$signed($rhs_b)};")
+                elseif node.op == OP_GE
+                    push!(lines, "    assign $lhs = {$(W-1)'b0, \\$signed($rhs_a) >= \\$signed($rhs_b)};")
+                elseif node.op in (OP_EQ, OP_NEQ, OP_LTU, OP_LEU, OP_GTU, OP_GEU)
+                    sv_op = op_to_sv(node.op)
+                    push!(lines, "    assign $lhs = {$(W-1)'b0, $rhs_a $sv_op $rhs_b};")
+                else
+                    sv_op = op_to_sv(node.op)
+                    push!(lines, "    assign $lhs = $rhs_a $sv_op $rhs_b;")
+                end
             end
         end
     end
@@ -152,7 +171,7 @@ function emit_verilog(graph::HWGraph, filepath::String)
             # First register captures combinational result
             push!(lines, "            $(reg_wire(id, node.scheduled_cycle)) <= $(comb_wire(id));")
             # Subsequent registers shift the value forward
-            for cyc in (node.scheduled_cycle + 1):fc
+            for cyc in (node.scheduled_cycle+1):fc
                 push!(lines, "            $(reg_wire(id, cyc)) <= $(reg_wire(id, cyc - 1));")
             end
         end

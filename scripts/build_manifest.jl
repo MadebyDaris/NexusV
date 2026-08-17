@@ -1,18 +1,31 @@
 # scripts/build_manifest.jl
 # Build manifest → generate nexus_mux.sv.
 # Run: julia --project=. scripts/build_manifest.jl
+#
+# funct3 encoding:
+#   0 → CMD_WRITE_ADDR   (stateful: latch rs1 as address)
+#   1 → CMD_WRITE_DATA   (stateful: latch rs1 as write data, pulse we)
+#   2 → CMD_START        (stateful: trigger compute)
+#   3 → mac_plus_5       (stateless: (rs1*rs2)+5)
+#   4 → crc_step         (stateless)
+#   5 → nexus_simd_mac   (stateless)
+#   6 → nexus_saturating_add (stateless)
+#   7 → nexus_barrett_reduction (stateless)
 
 using NexusV
 
-manifest = DatapathEntry[
-    DatapathEntry("mac_plus_5",              0, 4, false, "mac_plus_5.sv"),
-    DatapathEntry("crc_step",                1, 4, false, "crc_step.sv"),
-    DatapathEntry("nexus_simd_mac",          2, 3, false, "primitives/nexus_simd_mac.sv"),
-    DatapathEntry("nexus_saturating_add",    3, 2, false, "primitives/nexus_saturating_add.sv"),
-    DatapathEntry("nexus_barrett_reduction", 4, 3, false, "primitives/nexus_barrett_reduction.sv"),
-    DatapathEntry("nexus_mont_adapter",      5, 3, true,  "primitives/nexus_mont_adapter.sv"),
+# ── Stateful datapath (funct3 0-2) ──────────────────────────────────────
+stateful = StatefulEntry("nexus_mont_adapter", 3, "primitives/nexus_mont_adapter.sv")
+
+# ── Stateless datapaths (funct3 3-7) ────────────────────────────────────
+stateless = DatapathEntry[
+    DatapathEntry("mac_plus_5",              3, 4, false, "mac_plus_5.sv"),
+    DatapathEntry("crc_step",                4, 4, false, "crc_step.sv"),
+    DatapathEntry("nexus_simd_mac",          5, 3, false, "primitives/nexus_simd_mac.sv"),
+    DatapathEntry("nexus_saturating_add",    6, 2, false, "primitives/nexus_saturating_add.sv"),
+    DatapathEntry("nexus_barrett_reduction", 7, 3, false, "primitives/nexus_barrett_reduction.sv"),
 ]
 
 out_sv = joinpath(@__DIR__, "..", "hw", "rtl", "nexus_mux.sv")
-emit_dispatcher(manifest, out_sv)
-println("Done — $(length(manifest)) datapaths in mux")
+emit_dispatcher(stateful, stateless, out_sv)
+println("Done — 1 stateful + $(length(stateless)) stateless datapaths in mux")
