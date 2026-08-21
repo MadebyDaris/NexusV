@@ -4,7 +4,7 @@ using MacroTools
 using LLVM
 using GPUCompiler
 
-# ── Public API ────────────────────────────────────────────────────────────────
+# Public API
 # Core macros
 export @nexus_accelerate
 
@@ -32,7 +32,7 @@ export emit_verilog
 export emit_dispatcher, DatapathEntry
 export PrimitiveSpec, PRIMITIVES, register_primitive!
 
-# ── Internals ─────────────────────────────────────────────────────────────────
+# Internals
 
 # Core components
 include("Core/NexusV_macro.jl")

@@ -14,22 +14,22 @@
 #                           LLVM module after GPUCompiler has lowered the code.
 
 
-# NexusV-specific GPUCompiler target & para
+# NexusV-specific GPUCompiler target & param
 """
     NexusVCompilerParams
 
-Minimal `AbstractCompilerParams` implementation.
-GPUCompiler requires a concrete params type to create a `CompilerConfig`.
+Minimal `AbstractCompilerParams` implementation. GPUCompiler requires params type to create a `CompilerConfig`.
 """
 struct NexusVCompilerParams <: GPUCompiler.AbstractCompilerParams end
 """
     NexusVTarget
 
-Minimal `AbstractCompilerTarget` that tells GPUCompiler to lower to the
-host machine's native LLVM target (so the IR is valid LLVM we can inspect).
+Minimal `AbstractCompilerTarget` tells GPUCompiler to lower to the host machine's native LLVM target.
 We reuse `GPUCompiler.NativeCompilerTarget` under the hood.
 """
 const NexusVTarget = GPUCompiler.NativeCompilerTarget
+
+GPUCompiler.runtime_module(::GPUCompiler.CompilerJob{<:Any, NexusVCompilerParams}) = NexusV
 
 
 
@@ -38,18 +38,10 @@ const NexusVTarget = GPUCompiler.NativeCompilerTarget
     get_llvm_module(func::Function, arg_types::Type...) -> LLVM.Module
 Lower a Julia function to an LLVM Module using GPUCompiler.
 
-# Arguments
-- `func`      : The Julia function to compile.
-- `arg_types` : The concrete argument types (e.g. `Int32, Int32`).
-
-# Returns
-An `LLVM.Module` — the C++ object managed inside Julia's LLVM context.
+Outputs an `LLVM.Module`, the C++ object managed inside Julia's LLVM context.
 This is the starting point for all downstream NexusV optimization passes.
-
-# Example
 ```julia
 my_mac(a::Int32, b::Int32, c::Int32) = a * b + c
-
 mod = get_llvm_module(my_mac, Int32, Int32, Int32)
 println(mod)   # prints the LLVM IR text
 ```

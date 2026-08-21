@@ -1,0 +1,443 @@
+=========================================
+=== 1. Simple Arithmetic (MAC)      ===
+=========================================
+; ModuleID = 'start'
+source_filename = "start"
+target datalayout = "e-m:o-i64:64-i128:128-n32:64-S128"
+target triple = "arm64-apple-darwin24.0.0"
+
+define i32 @julia_ex_mac_3571(i32 signext %"a::Int32", i32 signext %"b::Int32", i32 signext %"c::Int32") local_unnamed_addr !dbg !50 {
+top:
+  %0 = mul i32 %"b::Int32", %"a::Int32", !dbg !54
+  %1 = add i32 %0, %"c::Int32", !dbg !58
+  ret i32 %1, !dbg !61
+}
+
+!llvm.module.flags = !{!0, !1}
+!llvm.dbg.cu = !{!2, !4, !5, !6, !7, !8, !9, !10, !11, !12, !13, !14, !15, !16, !17, !18, !19, !20, !21, !22, !23, !24, !25, !26, !27, !28, !29, !30, !31, !32, !33, !34, !35, !36, !37, !38, !39, !40, !41, !42, !43, !44, !45, !46, !47, !48, !49}
+
+!0 = !{i32 2, !"Dwarf Version", i32 4}
+!1 = !{i32 2, !"Debug Info Version", i32 3}
+!2 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!3 = !DIFile(filename: "julia", directory: ".")
+!4 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!5 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!6 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!7 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!8 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!9 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!10 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!11 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!12 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!13 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!14 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!15 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!16 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!17 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!18 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!19 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!20 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!21 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!22 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!23 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!24 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!25 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!26 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!27 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!28 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!29 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!30 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!31 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!32 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!33 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!34 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!35 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!36 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!37 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!38 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!39 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!40 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!41 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!42 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!43 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!44 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!45 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!46 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!47 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!48 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!49 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!50 = distinct !DISubprogram(name: "ex_mac", linkageName: "julia_ex_mac_3571", scope: null, file: !51, line: 6, type: !52, scopeLine: 6, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!51 = !DIFile(filename: "/Users/didirene/Documents/Daris/NexusV/tests/test_codegen.jl", directory: ".")
+!52 = !DISubroutineType(types: !53)
+!53 = !{}
+!54 = !DILocation(line: 88, scope: !55, inlinedAt: !57)
+!55 = distinct !DISubprogram(name: "*;", linkageName: "*", scope: !56, file: !56, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!56 = !DIFile(filename: "int.jl", directory: ".")
+!57 = !DILocation(line: 7, scope: !50)
+!58 = !DILocation(line: 87, scope: !59, inlinedAt: !60)
+!59 = distinct !DISubprogram(name: "+;", linkageName: "+", scope: !56, file: !56, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!60 = !DILocation(line: 8, scope: !50)
+!61 = !DILocation(line: 9, scope: !50)
+
+
+=========================================
+=== 2. Branching (If-Else)          ===
+=========================================
+; ModuleID = 'start'
+source_filename = "start"
+target datalayout = "e-m:o-i64:64-i128:128-n32:64-S128"
+target triple = "arm64-apple-darwin24.0.0"
+
+define i32 @julia_ex_branch_5184(i32 signext %"a::Int32", i32 signext %"b::Int32") local_unnamed_addr !dbg !50 {
+top:
+  %.not = icmp slt i32 %"b::Int32", %"a::Int32", !dbg !54
+  %0 = sub i32 %"a::Int32", %"b::Int32", !dbg !60
+  %1 = sub i32 %"b::Int32", %"a::Int32", !dbg !60
+  %common.ret.op = select i1 %.not, i32 %0, i32 %1, !dbg !60
+  ret i32 %common.ret.op, !dbg !61
+}
+
+!llvm.module.flags = !{!0, !1}
+!llvm.dbg.cu = !{!2, !4, !5, !6, !7, !8, !9, !10, !11, !12, !13, !14, !15, !16, !17, !18, !19, !20, !21, !22, !23, !24, !25, !26, !27, !28, !29, !30, !31, !32, !33, !34, !35, !36, !37, !38, !39, !40, !41, !42, !43, !44, !45, !46, !47, !48, !49}
+
+!0 = !{i32 2, !"Dwarf Version", i32 4}
+!1 = !{i32 2, !"Debug Info Version", i32 3}
+!2 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!3 = !DIFile(filename: "julia", directory: ".")
+!4 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!5 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!6 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!7 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!8 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!9 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!10 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!11 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!12 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!13 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!14 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!15 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!16 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!17 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!18 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!19 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!20 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!21 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!22 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!23 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!24 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!25 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!26 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!27 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!28 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!29 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!30 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!31 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!32 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!33 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!34 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!35 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!36 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!37 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!38 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!39 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!40 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!41 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!42 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!43 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!44 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!45 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!46 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!47 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!48 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!49 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!50 = distinct !DISubprogram(name: "ex_branch", linkageName: "julia_ex_branch_5184", scope: null, file: !51, line: 17, type: !52, scopeLine: 17, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!51 = !DIFile(filename: "/Users/didirene/Documents/Daris/NexusV/tests/test_codegen.jl", directory: ".")
+!52 = !DISubroutineType(types: !53)
+!53 = !{}
+!54 = !DILocation(line: 83, scope: !55, inlinedAt: !57)
+!55 = distinct !DISubprogram(name: "<;", linkageName: "<", scope: !56, file: !56, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!56 = !DIFile(filename: "int.jl", directory: ".")
+!57 = !DILocation(line: 425, scope: !58, inlinedAt: !60)
+!58 = distinct !DISubprogram(name: ">;", linkageName: ">", scope: !59, file: !59, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!59 = !DIFile(filename: "operators.jl", directory: ".")
+!60 = !DILocation(line: 18, scope: !50)
+!61 = !DILocation(line: 0, scope: !50)
+
+
+=========================================
+=== 3. Simple For Loop (Summation)  ===
+=========================================
+; ModuleID = 'start'
+source_filename = "start"
+target datalayout = "e-m:o-i64:64-i128:128-n32:64-S128"
+target triple = "arm64-apple-darwin24.0.0"
+
+define { ptr, i8 } @julia_ex_loop_5195(ptr noalias nocapture noundef nonnull align 8 dereferenceable(8) %union_bytes_return, i32 signext %"n::Int32") local_unnamed_addr !dbg !50 {
+top:
+  %narrow = call i32 @llvm.smax.i32(i32 %"n::Int32", i32 0), !dbg !54
+  %. = zext nneg i32 %narrow to i64, !dbg !54
+  %0 = icmp slt i32 %"n::Int32", 1, !dbg !55
+  br i1 %0, label %union_move, label %L19.preheader, !dbg !66
+
+L19.preheader:                                    ; preds = %top
+  %.not.peel = icmp eq i32 %"n::Int32", 1, !dbg !67
+  br i1 %.not.peel, label %union_move15, label %L19.preheader28, !dbg !71
+
+L19.preheader28:                                  ; preds = %L19.preheader
+  %1 = add nsw i64 %., -1, !dbg !71
+  %min.iters.check = icmp ult i64 %1, 8, !dbg !71
+  br i1 %min.iters.check, label %scalar.ph, label %vector.ph, !dbg !71
+
+vector.ph:                                        ; preds = %L19.preheader28
+  %n.vec = and i64 %1, -8, !dbg !71
+  %ind.end = or disjoint i64 %n.vec, 2, !dbg !71
+  br label %vector.body, !dbg !71
+
+vector.body:                                      ; preds = %vector.body, %vector.ph
+  %index = phi i64 [ 0, %vector.ph ], [ %index.next, %vector.body ]
+  %vec.phi = phi <2 x i64> [ <i64 1, i64 0>, %vector.ph ], [ %2, %vector.body ]
+  %vec.phi30 = phi <2 x i64> [ zeroinitializer, %vector.ph ], [ %3, %vector.body ]
+  %vec.phi31 = phi <2 x i64> [ zeroinitializer, %vector.ph ], [ %4, %vector.body ]
+  %vec.phi32 = phi <2 x i64> [ zeroinitializer, %vector.ph ], [ %5, %vector.body ]
+  %vec.ind = phi <2 x i64> [ <i64 2, i64 3>, %vector.ph ], [ %vec.ind.next, %vector.body ]
+  %step.add = add <2 x i64> %vec.ind, <i64 2, i64 2>
+  %step.add33 = add <2 x i64> %vec.ind, <i64 4, i64 4>
+  %step.add34 = add <2 x i64> %vec.ind, <i64 6, i64 6>
+  %2 = add <2 x i64> %vec.phi, %vec.ind, !dbg !72
+  %3 = add <2 x i64> %vec.phi30, %step.add, !dbg !72
+  %4 = add <2 x i64> %vec.phi31, %step.add33, !dbg !72
+  %5 = add <2 x i64> %vec.phi32, %step.add34, !dbg !72
+  %index.next = add nuw i64 %index, 8
+  %vec.ind.next = add <2 x i64> %vec.ind, <i64 8, i64 8>
+  %6 = icmp eq i64 %index.next, %n.vec
+  br i1 %6, label %middle.block, label %vector.body, !llvm.loop !75
+
+middle.block:                                     ; preds = %vector.body
+  %bin.rdx = add <2 x i64> %3, %2, !dbg !71
+  %bin.rdx36 = add <2 x i64> %4, %bin.rdx, !dbg !71
+  %bin.rdx37 = add <2 x i64> %5, %bin.rdx36, !dbg !71
+  %7 = call i64 @llvm.vector.reduce.add.v2i64(<2 x i64> %bin.rdx37), !dbg !71
+  %cmp.n = icmp eq i64 %1, %n.vec, !dbg !71
+  br i1 %cmp.n, label %union_move15, label %scalar.ph, !dbg !71
+
+scalar.ph:                                        ; preds = %middle.block, %L19.preheader28
+  %bc.resume.val = phi i64 [ %ind.end, %middle.block ], [ 2, %L19.preheader28 ]
+  %bc.merge.rdx = phi i64 [ %7, %middle.block ], [ 1, %L19.preheader28 ]
+  br label %L19, !dbg !71
+
+L19:                                              ; preds = %L19, %scalar.ph
+  %unionalloca.0 = phi i64 [ %value_phi8, %L19 ], [ %bc.merge.rdx, %scalar.ph ], !dbg !64
+  %value_phi4 = phi i64 [ %8, %L19 ], [ %bc.resume.val, %scalar.ph ]
+  %value_phi8 = add i64 %unionalloca.0, %value_phi4, !dbg !72
+  %.not = icmp eq i64 %value_phi4, %., !dbg !67
+  %8 = add nuw nsw i64 %value_phi4, 1, !dbg !70
+  br i1 %.not, label %union_move15, label %L19, !dbg !71, !llvm.loop !79
+
+post_union_move:                                  ; preds = %union_move15, %union_move
+  %tindex_phi1323 = phi i8 [ 2, %union_move15 ], [ 1, %union_move ]
+  %9 = insertvalue { ptr, i8 } { ptr null, i8 undef }, i8 %tindex_phi1323, 1, !dbg !80
+  ret { ptr, i8 } %9, !dbg !80
+
+union_move:                                       ; preds = %top
+  store i32 0, ptr %union_bytes_return, align 8, !dbg !80
+  br label %post_union_move, !dbg !80
+
+union_move15:                                     ; preds = %L19, %middle.block, %L19.preheader
+  %value_phi8.lcssa = phi i64 [ 1, %L19.preheader ], [ %7, %middle.block ], [ %value_phi8, %L19 ], !dbg !72
+  store i64 %value_phi8.lcssa, ptr %union_bytes_return, align 8, !dbg !80
+  br label %post_union_move, !dbg !80
+}
+
+; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)
+declare i32 @llvm.smax.i32(i32, i32) #0
+
+; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)
+declare i64 @llvm.vector.reduce.add.v2i64(<2 x i64>) #0
+
+attributes #0 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }
+
+!llvm.module.flags = !{!0, !1}
+!llvm.dbg.cu = !{!2, !4, !5, !6, !7, !8, !9, !10, !11, !12, !13, !14, !15, !16, !17, !18, !19, !20, !21, !22, !23, !24, !25, !26, !27, !28, !29, !30, !31, !32, !33, !34, !35, !36, !37, !38, !39, !40, !41, !42, !43, !44, !45, !46, !47, !48, !49}
+
+!0 = !{i32 2, !"Dwarf Version", i32 4}
+!1 = !{i32 2, !"Debug Info Version", i32 3}
+!2 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!3 = !DIFile(filename: "julia", directory: ".")
+!4 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!5 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!6 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!7 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!8 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!9 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!10 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!11 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!12 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!13 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!14 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!15 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!16 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!17 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!18 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!19 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!20 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!21 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!22 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!23 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!24 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!25 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!26 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!27 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!28 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!29 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!30 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!31 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!32 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!33 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!34 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!35 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!36 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!37 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!38 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!39 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!40 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!41 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!42 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!43 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!44 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!45 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!46 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!47 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!48 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!49 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!50 = distinct !DISubprogram(name: "ex_loop", linkageName: "julia_ex_loop_5195", scope: null, file: !51, line: 30, type: !52, scopeLine: 30, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!51 = !DIFile(filename: "/Users/didirene/Documents/Daris/NexusV/tests/test_codegen.jl", directory: ".")
+!52 = !DISubroutineType(types: !53)
+!53 = !{}
+!54 = !DILocation(line: 0, scope: !50)
+!55 = !DILocation(line: 83, scope: !56, inlinedAt: !58)
+!56 = distinct !DISubprogram(name: "<;", linkageName: "<", scope: !57, file: !57, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!57 = !DIFile(filename: "int.jl", directory: ".")
+!58 = !DILocation(line: 425, scope: !59, inlinedAt: !61)
+!59 = distinct !DISubprogram(name: ">;", linkageName: ">", scope: !60, file: !60, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!60 = !DIFile(filename: "operators.jl", directory: ".")
+!61 = !DILocation(line: 688, scope: !62, inlinedAt: !64)
+!62 = distinct !DISubprogram(name: "isempty;", linkageName: "isempty", scope: !63, file: !63, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!63 = !DIFile(filename: "range.jl", directory: ".")
+!64 = !DILocation(line: 917, scope: !65, inlinedAt: !66)
+!65 = distinct !DISubprogram(name: "iterate;", linkageName: "iterate", scope: !63, file: !63, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!66 = !DILocation(line: 32, scope: !50)
+!67 = !DILocation(line: 637, scope: !68, inlinedAt: !70)
+!68 = distinct !DISubprogram(name: "==;", linkageName: "==", scope: !69, file: !69, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!69 = !DIFile(filename: "promotion.jl", directory: ".")
+!70 = !DILocation(line: 921, scope: !65, inlinedAt: !71)
+!71 = !DILocation(line: 34, scope: !50)
+!72 = !DILocation(line: 0, scope: !73, inlinedAt: !74)
+!73 = distinct !DISubprogram(name: "+;", linkageName: "+", scope: !57, file: !57, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!74 = !DILocation(line: 33, scope: !50)
+!75 = distinct !{!75, !76, !77, !78}
+!76 = !{!"llvm.loop.peeled.count", i32 1}
+!77 = !{!"llvm.loop.isvectorized", i32 1}
+!78 = !{!"llvm.loop.unroll.runtime.disable"}
+!79 = distinct !{!79, !76, !78, !77}
+!80 = !DILocation(line: 35, scope: !50)
+
+
+=========================================
+=== 4. Array Access (Dot Product)   ===
+=========================================
+; ModuleID = 'start'
+source_filename = "start"
+target datalayout = "e-m:o-i64:64-i128:128-n32:64-S128"
+target triple = "arm64-apple-darwin24.0.0"
+
+define i32 @julia_ex_tuple_5268(ptr nocapture noundef nonnull readonly align 4 dereferenceable(16) %"a::Tuple", ptr nocapture noundef nonnull readonly align 4 dereferenceable(16) %"b::Tuple") local_unnamed_addr !dbg !50 {
+top:
+  %0 = load <4 x i32>, ptr %"a::Tuple", align 4, !dbg !54, !tbaa !58, !alias.scope !62, !noalias !65
+  %1 = load <4 x i32>, ptr %"b::Tuple", align 4, !dbg !54, !tbaa !58, !alias.scope !62, !noalias !65
+  %2 = mul <4 x i32> %1, %0, !dbg !54
+  %3 = call i32 @llvm.vector.reduce.add.v4i32(<4 x i32> %2), !dbg !70
+  ret i32 %3, !dbg !72
+}
+
+; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)
+declare i32 @llvm.vector.reduce.add.v4i32(<4 x i32>) #0
+
+attributes #0 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }
+
+!llvm.module.flags = !{!0, !1}
+!llvm.dbg.cu = !{!2, !4, !5, !6, !7, !8, !9, !10, !11, !12, !13, !14, !15, !16, !17, !18, !19, !20, !21, !22, !23, !24, !25, !26, !27, !28, !29, !30, !31, !32, !33, !34, !35, !36, !37, !38, !39, !40, !41, !42, !43, !44, !45, !46, !47, !48, !49}
+
+!0 = !{i32 2, !"Dwarf Version", i32 4}
+!1 = !{i32 2, !"Debug Info Version", i32 3}
+!2 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!3 = !DIFile(filename: "julia", directory: ".")
+!4 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!5 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!6 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!7 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!8 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!9 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!10 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!11 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!12 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!13 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!14 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!15 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!16 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!17 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!18 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!19 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!20 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!21 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!22 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!23 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!24 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!25 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!26 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!27 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!28 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!29 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!30 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!31 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!32 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!33 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!34 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!35 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!36 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!37 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!38 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!39 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!40 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!41 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!42 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!43 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!44 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!45 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!46 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!47 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!48 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!49 = distinct !DICompileUnit(language: DW_LANG_Julia, file: !3, producer: "julia", isOptimized: true, runtimeVersion: 0, emissionKind: LineTablesOnly, nameTableKind: None)
+!50 = distinct !DISubprogram(name: "ex_tuple", linkageName: "julia_ex_tuple_5268", scope: null, file: !51, line: 44, type: !52, scopeLine: 44, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!51 = !DIFile(filename: "/Users/didirene/Documents/Daris/NexusV/tests/test_codegen.jl", directory: ".")
+!52 = !DISubroutineType(types: !53)
+!53 = !{}
+!54 = !DILocation(line: 88, scope: !55, inlinedAt: !57)
+!55 = distinct !DISubprogram(name: "*;", linkageName: "*", scope: !56, file: !56, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!56 = !DIFile(filename: "int.jl", directory: ".")
+!57 = !DILocation(line: 47, scope: !50)
+!58 = !{!59, !59, i64 0}
+!59 = !{!"jtbaa_const", !60, i64 0}
+!60 = !{!"jtbaa", !61, i64 0}
+!61 = !{!"jtbaa"}
+!62 = !{!63}
+!63 = !{!"jnoalias_const", !64}
+!64 = !{!"jnoalias"}
+!65 = !{!66, !67, !68, !69}
+!66 = !{!"jnoalias_gcframe", !64}
+!67 = !{!"jnoalias_stack", !64}
+!68 = !{!"jnoalias_data", !64}
+!69 = !{!"jnoalias_typemd", !64}
+!70 = !DILocation(line: 87, scope: !71, inlinedAt: !57)
+!71 = distinct !DISubprogram(name: "+;", linkageName: "+", scope: !56, file: !56, type: !52, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2)
+!72 = !DILocation(line: 49, scope: !50)
+
